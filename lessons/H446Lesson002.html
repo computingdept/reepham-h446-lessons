@@ -726,6 +726,18 @@
       card.classList.add('vocab-card', hidesDefinition ? 'hide-definition' : 'hide-term');
     });
 
+    // Left rail: direct phase navigation. Right side of the board: presentation advance.
+    window.addEventListener('click', event => {
+      const phaseButton = event.target.closest('.nav button');
+      if (phaseButton) {
+        event.stopPropagation();
+        showPage(phaseButton.dataset.page);
+        return;
+      }
+      if (event.target.closest('#reveal, .exit-choice')) return;
+      if (event.clientX < window.innerWidth * 0.58) event.stopPropagation();
+    }, true);
+
     const iDoPage = document.getElementById('i-do');
     const iDoCard = iDoPage.querySelector('.think-swap-card');
     const iDoSteps = [...iDoPage.querySelectorAll('.model-step')];
