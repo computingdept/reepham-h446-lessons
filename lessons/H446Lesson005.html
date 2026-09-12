@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="OCR H446 classroom lesson on linked lists, graphs, trees, binary search trees and hash tables">
+  <title>H446Lesson005 — Linked Lists, Graphs, Trees and Hash Tables</title>
+  <style>
+    :root {
+      --reepham: #176b4a;
+      --reepham-dark: #0f4e36;
+      --ink: #16251f;
+      --muted: #52645c;
+      --line: #d9e2dd;
+      --paper: #ffffff;
+      --wash: #f4f7f5;
+      --blue-bg: #c9e9f5;
+      --blue-border: #24699d;
+      --blue-ink: #153f69;
+      --green-bg: #d9f2cd;
+      --green-border: #23652f;
+      --green-ink: #275c1d;
+      --orange-bg: #fae2d5;
+      --orange-border: #9b430f;
+      --orange-ink: #87350c;
+      --shadow: 0 8px 24px rgba(18, 45, 33, .09);
+      --teacher-nav-width: 176px;
+    }
+
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--wash);
+      color: var(--ink);
+      font-family: Inter, Aptos, "Segoe UI", Arial, sans-serif;
+      font-size: clamp(19px, 1.46vw, 28px);
+      line-height: 1.36;
+    }
+
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+    :focus-visible { outline: 4px solid #f2bf3b; outline-offset: 3px; }
+
+    .control-btn {
+      border: 2px solid var(--reepham);
+      border-radius: .55rem;
+      background: var(--reepham);
+      color: white;
+      padding: .5rem .8rem;
+      font-weight: 800;
+    }
+    .control-btn[aria-pressed="true"] { background: #fff; color: var(--reepham-dark); }
+
+    .navwrap {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 18;
+      width: var(--teacher-nav-width);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      background: rgba(255,255,255,.98);
+      border-right: 1px solid var(--line);
+      box-shadow: 4px 0 14px rgba(10,40,26,.06);
+      scrollbar-width: thin;
+    }
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: .18rem;
+      padding: .65rem .55rem .5rem;
+    }
+    .nav button {
+      border: 0;
+      border-left: 5px solid transparent;
+      background: transparent;
+      color: #385048;
+      padding: .55rem .55rem;
+      font-size: .7em;
+      font-weight: 800;
+      text-align: left;
+    }
+    .nav button.active {
+      color: var(--reepham-dark);
+      border-left-color: var(--reepham);
+      background: #edf7f2;
+      border-radius: .35rem;
+    }
+    .nav-tools { margin-top: auto; padding: .65rem .55rem; border-top: 1px solid var(--line); }
+    .nav-tools .control-btn { width: 100%; padding: .55rem .35rem; font-size: .68em; }
+
+    .signal-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 15;
+      margin-left: var(--teacher-nav-width);
+      padding: .45rem clamp(.8rem, 2.2vw, 2.25rem);
+      background: linear-gradient(180deg, rgba(244,247,245,.99), rgba(244,247,245,.92));
+      border-bottom: 1px solid var(--line);
+    }
+    .signal-bar {
+      max-width: 1500px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .signals { display: flex; align-items: center; flex-wrap: wrap; gap: .55rem; }
+    .signal {
+      min-width: 150px;
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: .3rem .78rem;
+      border: 2px solid;
+      border-radius: .55rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,.16);
+      font-size: .88em;
+      font-weight: 850;
+      line-height: 1.08;
+      text-align: center;
+    }
+    .signal.phase { color: var(--blue-ink); border-color: var(--blue-border); background: linear-gradient(135deg,#d7f1fa,var(--blue-bg)); }
+    .signal.behaviour { color: var(--green-ink); border-color: var(--green-border); background: linear-gradient(135deg,#e9f9df,var(--green-bg)); }
+    .signal.response { color: var(--orange-ink); border-color: var(--orange-border); background: linear-gradient(135deg,#fff0e8,var(--orange-bg)); }
+    .step-count { color: var(--muted); font-size: .78em; font-weight: 800; white-space: nowrap; }
+
+    .lesson-footer {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      left: var(--teacher-nav-width);
+      z-index: 12;
+      display: flex;
+      justify-content: flex-end;
+      gap: .45rem;
+      padding: .28rem clamp(1rem, 3vw, 3rem);
+      border-top: 1px solid var(--line);
+      background: rgba(255,255,255,.96);
+      color: var(--muted);
+      font-size: .6em;
+    }
+    .lesson-footer strong { color: var(--reepham-dark); }
+
+    main { max-width: none; margin: 0 0 0 var(--teacher-nav-width); padding: .72rem clamp(.8rem, 2.2vw, 2.25rem) 2.4rem; }
+    .page { display: none; animation: appear .22s ease-out; }
+    .page.active { display: block; }
+    @keyframes appear { from { opacity: .35; transform: translateY(6px); } }
+    .page-head { margin: 0 0 .65rem; }
+    h1 { margin: 0; font-size: clamp(2rem, 4.5vw, 4.5rem); line-height: 1.02; letter-spacing: -.045em; }
+    h2 { margin: 0 0 .65rem; font-size: clamp(1.45rem, 2.5vw, 2.35rem); line-height: 1.1; }
+    h3 { margin: 0 0 .45rem; font-size: 1.1em; }
+    p { margin: .24rem 0 .55rem; }
+    .lead { max-width: 65ch; color: var(--muted); font-size: 1.05em; }
+    .eyebrow { color: var(--reepham); font-size: .72em; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+
+    .grid { display: grid; gap: .7rem; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: .8rem;
+      padding: .75rem .88rem;
+      box-shadow: var(--shadow);
+    }
+    .card.accent { border-left: 8px solid var(--reepham); }
+    .card h2, .card h3 { color: var(--reepham-dark); }
+    .question { counter-increment: questions; }
+    .question h3::before { content: counter(questions) ". "; color: var(--reepham); }
+    .question-list { counter-reset: questions; }
+    .do-now-grid { gap: .62rem; }
+    .do-now-grid .card { min-height: clamp(155px, 18vh, 190px); padding: .6rem .78rem; }
+    .do-now-grid .card h3 { margin-bottom: .2rem; }
+    .do-now-grid .card p { margin: .15rem 0 .45rem; }
+    .do-now-grid .write-lines { min-height: clamp(62px, 8.5vh, 88px); }
+    .challenge-tag {
+      float: right;
+      border: 2px solid var(--orange-border);
+      border-radius: 999px;
+      background: var(--orange-bg);
+      color: var(--orange-ink);
+      padding: .16rem .5rem;
+      font-size: .58em;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .marks { float: right; color: var(--muted); font-weight: 750; font-size: .75em; }
+    .write-lines {
+      width: 100%; min-height: 120px; resize: vertical;
+      border: 2px solid #bccac3; border-radius: .5rem; padding: .7rem;
+      background: repeating-linear-gradient(#fff,#fff 35px,#e4ebe7 36px);
+    }
+    .answer {
+      display: none;
+      margin-top: .7rem;
+      border-left: 6px solid var(--reepham);
+      border-radius: .35rem;
+      background: #eaf6f0;
+      padding: .65rem .8rem;
+      color: #173f2d;
+    }
+    body.show-answers .answer { display: block; }
+    .answer strong { color: var(--reepham-dark); }
+    .swap-card { min-height: 250px; }
+    .swap-card .swap-answer {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+    body.show-answers .swap-card {
+      border: 2px solid #8eb4a1;
+      border-left: 8px solid var(--reepham);
+      background: #edf8f2;
+      box-shadow: 0 4px 12px rgba(18, 75, 49, .09);
+    }
+    body.show-answers .swap-card .task-view { display: none; }
+    body.show-answers .question {
+      border: 2px solid #8eb4a1;
+      border-left: 8px solid var(--reepham);
+      background: #edf8f2;
+      box-shadow: 0 4px 12px rgba(18, 75, 49, .09);
+    }
+    body.show-answers .question > :not(.answer) { display: none; }
+    body.show-answers .question > .answer {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+    .answer-context {
+      margin: 0 0 .65rem;
+      padding: .48rem .65rem;
+      border: 1px solid #8a9891;
+      border-left: 5px solid #294b63;
+      border-radius: .35rem;
+      background: #f9fbfa;
+      color: #1f3028;
+      font-size: .9em;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .learning-group { padding: .72rem .85rem; }
+    .learning-group h2 { margin-bottom: .4rem; }
+    .learning-item { padding: .43rem 0; }
+    .learning-item + .learning-item { border-top: 1px solid var(--line); }
+    .learning-item strong { display: block; color: var(--reepham-dark); margin-bottom: .16rem; }
+    .learning-item span { color: var(--muted); font-size: .94em; line-height: 1.3; }
+    .structure-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .55rem; }
+    .structure-grid .card { grid-column: span 2; min-height: 210px; padding: .62rem .7rem; }
+    .structure-grid .card:nth-child(4) { grid-column: 2 / span 2; }
+    .structure-grid .card:nth-child(5) { grid-column: 4 / span 2; }
+    .structure-grid h2 { margin-bottom: .25rem; font-size: 1.06em; }
+    .structure-grid p { font-size: .82em; line-height: 1.24; }
+    .diagram {
+      min-height: 64px; display: flex; align-items: center; justify-content: center;
+      gap: .28rem; margin: .25rem 0 .35rem; padding: .35rem;
+      border-radius: .5rem; background: #f4f8f6; color: var(--reepham-dark);
+      font-family: Consolas, "Cascadia Code", monospace; font-size: .76em; font-weight: 850;
+      text-align: center;
+    }
+    .node { border: 2px solid #6b8d7d; border-radius: .35rem; background: #fff; padding: .24rem .38rem; white-space: nowrap; }
+    .arrow { color: var(--reepham); font-size: 1.25em; }
+    .tree-diagram { line-height: 1.22; white-space: pre; }
+    .compact-list { margin: .2rem 0; font-size: .82em; line-height: 1.22; }
+    ul, ol { margin: .25rem 0 .55rem; padding-left: 1.2em; }
+    li { margin: .22rem 0; }
+
+    .think {
+      position: relative; display: inline-block; margin: .4rem 0;
+      border: 2px solid var(--reepham); border-radius: 999px;
+      color: var(--reepham-dark); background: #fff; padding: .38rem .8rem; font-weight: 850;
+    }
+    .think-panel {
+      display: none; margin-top: .55rem; padding: .65rem .8rem;
+      border-radius: .55rem; background: #edf7f2; border: 1px solid #b7d8c8;
+    }
+    .think[aria-expanded="true"] + .think-panel { display: block; }
+
+    .sticky-layout { display: grid; grid-template-columns: minmax(0, 2.15fr) minmax(270px, .85fr); gap: 1rem; align-items: start; }
+    .reference { position: sticky; top: 170px; background: #fff; border: 2px solid #b8d4c6; border-radius: .75rem; padding: .72rem; box-shadow: var(--shadow); }
+    .reference h3 { color: var(--reepham-dark); }
+    .command { display: grid; grid-template-columns: auto 1fr; gap: .24rem .5rem; font-size: .88em; }
+    .command dt { color: var(--reepham-dark); font-weight: 900; }
+    .command dd { margin: 0; }
+
+    .steps { counter-reset: model; display: grid; gap: .75rem; }
+    .model-step { counter-increment: model; display: grid; grid-template-columns: 3rem 1fr; gap: .7rem; align-items: start; }
+    .model-step::before {
+      content: counter(model); width: 2.4rem; height: 2.4rem; display: grid; place-items: center;
+      background: var(--reepham); color: white; border-radius: 50%; font-weight: 900;
+    }
+    .model-step div { padding-top: .15rem; }
+    .exam-answer { background: #f7faf8; border: 2px dashed #98b5a7; border-radius: .6rem; padding: .85rem; }
+    pre.code {
+      margin: .35rem 0 .5rem;
+      padding: .62rem .72rem;
+      overflow: auto;
+      border: 2px solid #b9c8c0;
+      border-radius: .55rem;
+      background: #10251d;
+      color: #f1faf5;
+      font-family: Consolas, "Cascadia Code", "Courier New", monospace;
+      font-size: .72em;
+      line-height: 1.28;
+      tab-size: 4;
+      white-space: pre-wrap;
+    }
+    .code-note { color: var(--muted); font-size: .82em; }
+    .operation-row { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .42rem; margin-top: .35rem; }
+    .operation-row div { border: 1px solid var(--line); border-radius: .45rem; padding: .38rem .48rem; background: #f8fbf9; }
+    .operation-row code { color: var(--reepham-dark); font-weight: 900; }
+    .improve { border-bottom: 3px solid #f2bf3b; font-weight: 760; }
+    .i-do-page .page-head { margin-bottom: .65rem; }
+    .i-do-page .page-head .lead { margin: .3rem 0 0; max-width: none; }
+    .i-do-page .card { padding: .8rem .95rem; }
+    .i-do-page .steps { gap: .4rem; }
+    .i-do-page .model-step { grid-template-columns: 2.55rem 1fr; gap: .55rem; }
+    .i-do-page .model-step::before { width: 2.05rem; height: 2.05rem; }
+    .i-do-page .model-step h3 { margin-bottom: .1rem; }
+    .i-do-page .model-step p { margin: .08rem 0 .22rem; font-size: .95em; line-height: 1.3; }
+    .i-do-page .think { margin: .25rem 0 0; }
+    .i-do-page .think-panel { font-size: .93em; line-height: 1.36; }
+    .i-do-page .exam-answer { margin-top: .55rem; }
+    .think-swap-card.show-thinking {
+      border: 2px solid #8eb4a1;
+      border-left: 8px solid var(--reepham);
+      background: #edf8f2;
+      box-shadow: 0 4px 12px rgba(18, 75, 49, .09);
+    }
+    .think-swap-card.show-thinking .think-task { display: none; }
+    .think-swap-card.show-thinking .think-panel { display: block; }
+    .i-do-page.thinking-visible .page-head,
+    .i-do-page.thinking-visible .reference { display: none; }
+    .i-do-page.thinking-visible .sticky-layout { display: block; }
+    .i-do-page.thinking-visible .think-swap-card { width: 100%; }
+    .i-do-page.thinking-visible .think-panel { font-size: 1em; line-height: 1.38; }
+    .i-do-page.thinking-visible .exam-answer { padding: .8rem; }
+
+    .you-do-page .page-head { margin-bottom: .55rem; }
+    .you-do-title {
+      white-space: nowrap;
+      font-size: clamp(1.55rem, 2.6vw, 2.65rem);
+      letter-spacing: -.03em;
+    }
+    .you-do-title .title-kicker {
+      color: var(--reepham);
+      font-size: .52em;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .you-do-page .lead { max-width: none; margin: .25rem 0 0; font-size: .82em; }
+    .you-do-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .58rem; }
+    .you-do-grid .card { min-height: clamp(178px, 20.5vh, 215px); padding: .68rem .76rem; }
+    .you-do-grid .card h3 { margin-bottom: .2rem; font-size: 1.04em; }
+    .you-do-grid .card p { margin: .12rem 0; font-size: .97em; line-height: 1.28; }
+    .you-do-grid .answer { font-size: .94em; line-height: 1.3; }
+    .you-do-grid .answer-context {
+      margin-bottom: .32rem;
+      padding: .35rem .48rem;
+      font-size: 1em;
+      line-height: 1.28;
+    }
+    .you-do-grid pre.code { margin: .25rem 0; padding: .42rem .5rem; font-size: .6em; line-height: 1.2; max-height: 116px; }
+    .you-do-grid .answer pre.code { font-size: .62em; max-height: 125px; }
+
+    .vocab { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .48rem; }
+    .vocab div { background: #fff; border: 1px solid var(--line); border-radius: .6rem; padding: .54rem .62rem; }
+    .vocab dt { color: var(--reepham-dark); font-weight: 900; }
+    .vocab dd { margin: .1rem 0 0; color: var(--muted); font-size: .94em; line-height: 1.26; }
+    .vocab-card {
+      position: relative;
+      cursor: pointer;
+      min-height: 4.25rem;
+      transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+    .vocab-card:hover, .vocab-card:focus-visible {
+      border-color: var(--reepham-green);
+      box-shadow: 0 0 0 3px rgba(23, 112, 77, .13);
+      outline: none;
+    }
+    .vocab-card:active { transform: scale(.99); }
+    body:not(.show-answers) .vocab-card.hide-term:not(.vocab-revealed) dt,
+    body:not(.show-answers) .vocab-card.hide-definition:not(.vocab-revealed) dd {
+      color: transparent;
+      position: relative;
+      user-select: none;
+    }
+    body:not(.show-answers) .vocab-card.hide-term:not(.vocab-revealed) dt::after,
+    body:not(.show-answers) .vocab-card.hide-definition:not(.vocab-revealed) dd::after {
+      color: var(--reepham-green);
+      content: 'Click to reveal';
+      font-weight: 900;
+      inset: 0;
+      position: absolute;
+    }
+    body:not(.show-answers) .vocab-card.hide-term:not(.vocab-revealed) dt::after { content: 'Hidden keyword — click to reveal'; }
+    body:not(.show-answers) .vocab-card.hide-definition:not(.vocab-revealed) dd::after { content: 'Hidden definition — click to reveal'; }
+    .vocab-head {
+      display: flex;
+      align-items: baseline;
+      gap: .6rem;
+      margin-bottom: .45rem;
+      white-space: nowrap;
+    }
+    .vocab-head h1 { font-size: clamp(1.55rem, 2.5vw, 2.55rem); }
+    .vocab-head .lead { margin: 0; max-width: none; font-size: .78em; }
+
+    .scorebox { display: flex; gap: .7rem; align-items: center; flex-wrap: wrap; padding: .8rem; background: #edf7f2; border-radius: .6rem; }
+    .scorebox input { width: 4.2rem; padding: .3rem; border: 2px solid #7c9c8e; border-radius: .35rem; }
+
+    .exit-head { margin-bottom: .8rem; }
+    .exit-head h1 { font-size: clamp(1.9rem, 3.3vw, 3.4rem); }
+    .exit-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .8rem; }
+    .exit-choice {
+      min-height: 190px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: .25rem;
+      border: 2px solid #aebdb6;
+      border-radius: .8rem;
+      background: #fff;
+      color: var(--ink);
+      padding: .7rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .exit-choice:hover { border-color: var(--reepham); background: #f7fbf9; }
+    .exit-choice[aria-pressed="true"] {
+      border: 4px solid var(--reepham);
+      background: #eaf6f0;
+      box-shadow: 0 0 0 4px #fff, 0 0 0 8px #176b4a;
+    }
+    .exit-icon { font-size: clamp(3.8rem, 7vw, 6.5rem); line-height: 1; }
+    .exit-choice strong { color: var(--reepham-dark); font-size: 1.15em; }
+    .exit-choice span:last-child { color: var(--muted); font-size: .88em; line-height: 1.25; }
+    .exit-status { min-height: 1.4em; margin: .65rem 0 0; color: var(--reepham-dark); font-size: .78em; font-weight: 850; text-align: center; }
+    .next-lesson-card {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      margin-top: .7rem;
+      border-left: 8px solid var(--reepham);
+      padding: .7rem .9rem;
+    }
+    .next-lesson-card h2 { flex: 0 0 auto; margin: 0; font-size: 1.15em; }
+    .next-lesson-card p { margin: 0; font-size: .88em; }
+
+    @media (min-width: 901px) and (max-height: 900px) {
+      body { font-size: clamp(19px, 1.42vw, 26px); }
+      .signal-wrap { padding-top: .35rem; padding-bottom: .35rem; }
+      main { padding-top: .55rem; }
+      .you-do-grid .card { min-height: clamp(165px, 19.5vh, 198px); }
+      .exit-choice { min-height: 172px; }
+    }
+
+    @media (max-width: 900px) {
+      .navwrap {
+        position: static;
+        width: auto;
+        flex-direction: row;
+        align-items: center;
+        overflow-x: auto;
+        border-right: 0;
+        border-top: 1px solid var(--line);
+        box-shadow: none;
+      }
+      .nav { min-width: max-content; flex-direction: row; gap: .3rem; padding: 0 1rem .65rem; }
+      .nav button { border-left: 0; border-bottom: 4px solid transparent; padding: .45rem .72rem .35rem; text-align: center; }
+      .nav button.active { border-bottom-color: var(--reepham); border-radius: .45rem .45rem 0 0; }
+      .nav-tools { margin: 0; padding: 0 .65rem .5rem 0; border-top: 0; }
+      .nav-tools .control-btn { width: auto; white-space: nowrap; }
+      .signal-wrap { margin-left: 0; }
+      main { margin-left: 0; }
+      .lesson-footer { left: 0; }
+      .grid.two, .grid.three, .vocab, .sticky-layout { grid-template-columns: 1fr; }
+      .structure-grid { grid-template-columns: 1fr; }
+      .structure-grid .card, .structure-grid .card:nth-child(4), .structure-grid .card:nth-child(5) { grid-column: auto; }
+      .you-do-grid { grid-template-columns: 1fr; }
+      .you-do-title { white-space: normal; }
+      .vocab-head { align-items: flex-start; flex-direction: column; white-space: normal; }
+      .exit-options { grid-template-columns: 1fr; }
+      .exit-choice { min-height: 150px; }
+      .next-lesson-card { align-items: flex-start; flex-direction: column; }
+      .reference { position: static; }
+      .signal { min-width: 120px; min-height: 46px; }
+      .signal-wrap { top: 0; }
+    }
+    @media print {
+      .signal-wrap, .think { position: static; }
+      .navwrap, .signal-wrap, .lesson-footer { display: none; }
+      .page { display: block !important; page-break-after: always; }
+      .answer { display: none !important; }
+      body { background: #fff; font-size: 12pt; }
+      .card, .topic { box-shadow: none; break-inside: avoid; }
+    }
+  
+    .exam-ref { display:inline-block; margin-top:.22rem; color:var(--reepham); font-size:.68em; font-weight:800; letter-spacing:.015em; }
+    .i-do-page .model-step { display:none; }
+    .i-do-page .model-step.step-visible { display:flex; }
+    .vocab-card.hide-definition:not(.revealed) dd,
+    .vocab-card.hide-term:not(.revealed) dt { color:transparent; position:relative; user-select:none; }
+    .vocab-card.hide-definition:not(.revealed) dd::after,
+    .vocab-card.hide-term:not(.revealed) dt::after { content:'________________'; color:var(--muted); position:absolute; left:.6rem; top:50%; transform:translateY(-50%); }
+
+  </style>
+</head>
+<body>
+  <div class="navwrap">
+    <nav class="nav" aria-label="Lesson phases">
+      <button class="active" data-page="do-now">Do Now</button>
+      <button data-page="objectives">Objectives</button>
+      <button data-page="new-learning">New Learning</button>
+      <button data-page="i-do">I Do</button>
+      <button data-page="we-do">We Do</button>
+      <button data-page="you-do">You Do</button>
+      <button data-page="vocabulary">Key Vocabulary</button>
+      <button data-page="exit-ticket">Exit Ticket</button>
+    </nav>
+    <div class="nav-tools"><button id="reveal" class="control-btn" type="button" aria-pressed="false">Reveal answers</button></div>
+  </div>
+
+  <div class="signal-wrap" aria-live="polite">
+    <div class="signal-bar">
+      <div class="signals">
+        <div id="phaseSignal" class="signal phase">Do Now</div>
+        <div id="behaviourSignal" class="signal behaviour">Silent Working</div>
+        <div id="responseSignal" class="signal response" hidden></div>
+      </div>
+      <time id="lessonDate" class="step-count"></time>
+    </div>
+  </div>
+
+  <main>
+    <section id="do-now" class="page active" data-phase="Do Now" data-behaviour="Silent Working" data-response="MWB">
+      <div class="grid two question-list do-now-grid">
+        <article class="card question"><h3>LIFO</h3><p>Define LIFO and name the data structure that uses it.</p><textarea class="write-lines" aria-label="Answer defining LIFO"></textarea><div class="answer"><strong>Answer:</strong> Last in, first out. A stack uses LIFO.</div></article>
+        <article class="card question"><h3>Queue operation</h3><p>Which C# method removes and returns the item at the front of a queue?</p><textarea class="write-lines" aria-label="Answer naming the queue method"></textarea><div class="answer"><strong>Answer:</strong> <code>Dequeue()</code>.</div></article>
+        <article class="card question"><h3>Predict</h3><p>A stack contains A, then B, then C. What is returned by <code>Pop()</code>, and what becomes the new top?</p><textarea class="write-lines" aria-label="Answer predicting a stack operation"></textarea><div class="answer"><strong>Answer:</strong> <code>C</code> is returned and removed; <code>B</code> becomes the new top.</div></article>
+        <article class="card question"><h3>Select <span class="challenge-tag">High Challenge</span></h3><p>A help desk must process requests in arrival order. Select a stack or queue and justify your answer using its operations.</p><textarea class="write-lines" aria-label="Answer selecting a structure"></textarea><div class="answer"><strong>Answer:</strong> Use a queue. <code>Enqueue()</code> adds each request at the rear and <code>Dequeue()</code> removes the earliest request from the front, so FIFO preserves arrival order.</div></article>
+      </div>
+    </section>
+
+    <section id="objectives" class="page" data-phase="Objectives" data-behaviour="Listening" data-response="">
+      <div class="grid three">
+        <article class="card accent"><h2>Recognise</h2><p>Identify linked lists, graphs, trees, binary search trees and hash tables from descriptions and diagrams.</p></article>
+        <article class="card accent"><h2>Interpret</h2><p>Explain how nodes, links, edges, ordering and hash functions organise data.</p></article>
+        <article class="card accent"><h2>Select</h2><p>Choose a suitable structure for a problem and justify the decision using its behaviour.</p></article>
+      </div>
+      <article class="card" style="margin-top:.7rem"><h2>Success looks like…</h2><ul><li>I distinguish a directed graph from an undirected graph.</li><li>I apply the ordering rule in a binary search tree.</li><li>I explain how a hash table finds data and what happens in a collision.</li></ul></article>
+    </section>
+
+    <section id="new-learning" class="page" data-phase="New Learning" data-behaviour="Listening" data-response="Cold Calling">
+      <div class="grid structure-grid">
+        <article class="card accent"><h2>Linked list</h2><div class="diagram"><span class="node">A | next</span><span class="arrow">→</span><span class="node">B | next</span><span class="arrow">→</span><span class="node">C | null</span></div><p>Each node stores data and a reference to the next node. Nodes need not be adjacent in memory. C#: <code>LinkedList&lt;T&gt;</code>.</p></article>
+        <article class="card accent"><h2>Graph</h2><div class="diagram"><span class="node">A</span><span class="arrow">→</span><span class="node">B</span><span class="arrow">—</span><span class="node">C</span></div><p>Vertices are joined by edges. Directed edges have a direction; undirected edges work both ways. An adjacency list stores each vertex’s neighbours.</p></article>
+        <article class="card accent"><h2>Tree</h2><div class="diagram tree-diagram">root
+↙     ↘
+child  child
+        ↘ leaf</div><p>A hierarchical graph with one root and no cycles. Nodes may have parents, children and leaves.</p></article>
+        <article class="card accent"><h2>Binary search tree</h2><div class="diagram tree-diagram">50
+↙    ↘
+30    70
+↙ ↘
+20 40</div><p>Each node has at most two children. Smaller values go left; larger values go right, supporting efficient searching when balanced.</p></article>
+        <article class="card accent"><h2>Hash table</h2><div class="diagram"><span class="node">key</span><span class="arrow">→</span><span class="node">hash()</span><span class="arrow">→</span><span class="node">index</span></div><p>A hash function maps a key to an array index. A collision occurs when two keys map to the same location. C#: <code>Dictionary&lt;TKey,TValue&gt;</code>.</p></article>
+      </div>
+    </section>
+
+    <section id="i-do" class="page i-do-page" data-phase="I Do" data-behaviour="Listening" data-response="MWB">
+      <div class="page-head"><div class="eyebrow">Turn structure into marks</div><p class="lead"><strong>Question:</strong> Insert 30, 70, 20 and 40 into a binary search tree whose root is 50. Then describe the search for 40. <span class="marks">[6 marks]</span></p><small class="exam-ref">Adapted from OCR H446/01 · November 2021 · Q7(b)(i–ii)</small></div>
+      <div class="sticky-layout">
+        <div class="card think-swap-card">
+          <div class="think-task">
+            <div class="steps">
+              <div class="model-step"><div><h3>Start at 50</h3><p>Compare each new value with the current node.</p></div></div>
+              <div class="model-step"><div><h3>Build the branches</h3><p>30 goes left; 70 goes right; 20 goes left of 30; 40 goes right of 30.</p></div></div>
+              <div class="model-step"><div><h3>Search by comparison</h3><p>At each node, equality stops; smaller moves left; larger moves right.</p></div></div>
+            </div>
+          </div>
+          
+          <div class="think-panel">
+            <div class="answer-context">Insert 30, 70, 20 and 40 beneath root 50, then describe the search for 40. [6 marks]</div>
+            <div class="diagram tree-diagram" style="font-size:1.05em">50
+↙    ↘
+30    70
+↙ ↘
+20 40</div>
+            <div class="exam-answer"><strong>Search:</strong> compare 40 with 50. Since 40 is smaller, follow the left link to 30. Since 40 is larger than 30, follow the right link to 40. The value matches, so the search stops.</div>
+          </div>
+        </div>
+        <aside class="reference"><h3>BST rule</h3><p><strong>Left &lt; node &lt; right</strong></p><ol><li>Begin at the root.</li><li>Compare the value.</li><li>Move left or right.</li><li>Stop at a match or null link.</li></ol><p>A balanced tree usually needs fewer comparisons than a long, skewed tree.</p></aside>
+      </div>
+    </section>
+
+    <section id="we-do" class="page" data-phase="We Do" data-behaviour="Quiet Working" data-response="MWB">
+      <div class="page-head"><div class="eyebrow">Improve the answer together</div><p class="lead"><strong>Question:</strong> A route-planning system stores one-way streets and two-way roads. Explain how directed and undirected graph edges should represent them. <span class="marks">[4 marks]</span></p><small class="exam-ref">Adapted from OCR H446/01 graph and hash-table question styles</small></div>
+      <div class="sticky-layout">
+        <div class="grid">
+          <article class="card swap-card" data-answer-context="A route-planning system stores one-way streets and two-way roads. Explain how directed and undirected graph edges should represent them. [4 marks]">
+            <div class="task-view"><h2>Weak answer</h2><p>“Use arrows for some roads and lines for the others.”</p><p>Rewrite this as two developed, contextual points.</p><textarea class="write-lines" aria-label="Improved graph answer"></textarea></div>
+            <div class="answer swap-answer"><h2>Possible improved answer</h2><p>A <strong>directed edge</strong> should represent a one-way street because its arrow allows travel from one vertex to another only in the permitted direction. An <strong>undirected edge</strong> should represent a two-way road because the connection can be followed in either direction between the two locations.</p></div>
+          </article>
+          <article class="card swap-card" data-answer-context="Two usernames produce the same hash-table index. State the event and one way it can be handled. [2 marks]">
+            <div class="task-view"><h2>Push it further</h2><p>Two usernames produce the same hash-table index. Name what has happened and state one way the table can handle it.</p></div>
+            <div class="answer swap-answer"><h2>Answer</h2><p>This is a <strong>collision</strong>. It can be handled by storing collided items in a linked list at that index (chaining), or by probing for another available location.</p></div>
+          </article>
+        </div>
+        <aside class="reference"><h3>Graph language</h3><dl class="command"><dt>Vertex</dt><dd>An item or location.</dd><dt>Edge</dt><dd>A connection.</dd><dt>Directed</dt><dd>Connection has a permitted direction.</dd><dt>Undirected</dt><dd>Connection works both ways.</dd></dl></aside>
+      </div>
+    </section>
+
+    <section id="you-do" class="page you-do-page" data-phase="You Do" data-behaviour="Silent Working" data-response="">
+      <div class="page-head"><h1 class="you-do-title"><span class="title-kicker">Independent exam practice · 25 marks</span> — Show what you can do</h1><p class="lead">Answer all six questions. Use precise structure vocabulary and apply each answer to the context.</p></div>
+      <div class="grid question-list you-do-grid">
+        <article class="card question"><h3>Identify <span class="marks">[5]</span></h3><p>Name the best structure for: browser history links; a road network; a folder hierarchy; ordered fast search; key–value lookup. <small class="exam-ref">Adapted from OCR H446 structure-selection questions</small></p><div class="answer"><strong>Answers:</strong> linked list; graph; tree; binary search tree; hash table.</div></article>
+        <article class="card question"><h3>Linked list <span class="marks">[4]</span></h3><p>Explain what each node stores and why inserting a node does not require every later item to move. <small class="exam-ref">Adapted from June 2023 Q2(c)(iv)</small></p><div class="answer"><strong>Mark points:</strong> a node stores data and a link/reference; nodes can be separate in memory; insertion creates a node; references are updated rather than shifting later data.</div></article>
+        <article class="card question"><h3>Graph <span class="marks">[4]</span></h3><p>Explain the difference between directed and undirected edges using a social-media “follows” network. <small class="exam-ref">OCR H446 directed/undirected graph style</small></p><div class="answer"><strong>Mark points:</strong> vertices represent users; edges represent follows; directed means A may follow B without B following A; undirected would represent a mutual connection usable both ways.</div></article>
+        <article class="card question"><h3>Tree <span class="marks">[4]</span></h3><p>Define root, parent, child and leaf using a school folder hierarchy. <small class="exam-ref">Adapted from OCR H446 tree questions</small></p><div class="answer"><strong>Answer:</strong> the root is the top folder; a parent contains linked folders below it; those are its children; a leaf has no child folders.</div></article>
+        <article class="card question"><h3>BST trace <span class="marks">[4]</span></h3><p>Insert 25, 75, 10 and 30 beneath root 50. State the comparisons used to find 30. <small class="exam-ref">Adapted from November 2021 Q7(b)(i–ii)</small></p><div class="answer"><div class="diagram tree-diagram">50
+↙    ↘
+25    75
+↙ ↘
+10 30</div><strong>Search:</strong> 30 &lt; 50, so left; 30 &gt; 25, so right; match 30.</div></article>
+        <article class="card question"><h3>Hash table <span class="marks">[4]</span></h3><p>Explain how a username is found and what happens if two usernames produce the same index. <small class="exam-ref">Extended from November 2021 Q7(b)(iv)</small></p><div class="answer"><strong>Mark points:</strong> the username is the key; the hash function calculates an index; the table checks that location; the duplicate index is a collision and needs chaining or probing.</div></article>
+      </div>
+    </section>
+
+    <section id="vocabulary" class="page" data-phase="Key Vocabulary" data-behaviour="Listening" data-response="Choral Response">
+      <div class="vocab-head"><h1><span class="title-kicker">Precision matters</span> — Say it like a computer scientist</h1><p class="lead">Say the missing keyword or definition before each click. One answer appears at a time.</p></div>
+      <dl class="vocab">
+        <div><dt>Linked list</dt><dd>Nodes connected by references.</dd></div>
+        <div><dt>Node</dt><dd>A unit that stores data and links.</dd></div>
+        <div><dt>Reference</dt><dd>A link to another node.</dd></div>
+        <div><dt>Graph</dt><dd>Vertices connected by edges.</dd></div>
+        <div><dt>Vertex</dt><dd>An item represented in a graph.</dd></div>
+        <div><dt>Edge</dt><dd>A connection between vertices.</dd></div>
+        <div><dt>Directed</dt><dd>An edge with a specified direction.</dd></div>
+        <div><dt>Undirected</dt><dd>An edge that works both ways.</dd></div>
+        <div><dt>Tree</dt><dd>A rooted hierarchy with no cycles.</dd></div>
+        <div><dt>Leaf</dt><dd>A tree node with no children.</dd></div>
+        <div><dt>Binary search tree</dt><dd>A binary tree ordered for searching.</dd></div>
+        <div><dt>Hash collision</dt><dd>Two keys mapping to the same index.</dd></div>
+      </dl>
+    </section>
+
+    <section id="exit-ticket" class="page" data-phase="Exit Ticket" data-behaviour="Reflection" data-response="Show Your Hand">
+      <div class="page-head exit-head"><div class="eyebrow">Lesson reflection</div><h1>How did today’s lesson go?</h1><p class="lead">Choose the hand that best matches how confident you feel now.</p></div>
+      <div class="exit-options" role="group" aria-label="Lesson confidence">
+        <button class="exit-choice" type="button" aria-pressed="false" data-choice="Confident — ready to move on"><span class="exit-icon" aria-hidden="true">👍</span><strong>Confident</strong><span>I can distinguish and select all five structures.</span></button>
+        <button class="exit-choice" type="button" aria-pressed="false" data-choice="Nearly there — more practice needed"><span class="exit-icon" aria-hidden="true">🫳</span><strong>Nearly there</strong><span>I understand the diagrams but need more application practice.</span></button>
+        <button class="exit-choice" type="button" aria-pressed="false" data-choice="Need support next lesson"><span class="exit-icon" aria-hidden="true">👎</span><strong>Need support</strong><span>I am unsure about links, edges, tree ordering or hashing.</span></button>
+      </div>
+      <p id="exitStatus" class="exit-status" aria-live="polite"></p>
+      <article class="card next-lesson-card"><h2>Get ready for next lesson</h2><p>Draw one of today’s structures and annotate how a program would find or insert one item.</p></article>
+    </section>
+  </main>
+
+  <footer class="lesson-footer"><strong>H446Lesson005 · OCR H446</strong><span>Linked lists, graphs, trees, BSTs and hash tables</span></footer>
+
+  <script>
+    const order = ['do-now','objectives','new-learning','i-do','we-do','you-do','vocabulary','exit-ticket'];
+    const pages = [...document.querySelectorAll('.page')];
+    const tabs = [...document.querySelectorAll('.nav button')];
+    const phaseSignal = document.getElementById('phaseSignal');
+    const behaviourSignal = document.getElementById('behaviourSignal');
+    const responseSignal = document.getElementById('responseSignal');
+    const reveal = document.getElementById('reveal');
+    const lessonDate = document.getElementById('lessonDate');
+    const now = new Date();
+    lessonDate.dateTime = now.toISOString().slice(0, 10);
+    lessonDate.textContent = new Intl.DateTimeFormat('en-GB', { weekday:'short', day:'numeric', month:'short', year:'numeric' }).format(now);
+
+    function showPage(id, updateHash = true) {
+      const page = document.getElementById(id) || document.getElementById('do-now');
+      document.body.classList.remove('show-answers');
+      reveal.setAttribute('aria-pressed','false');
+      reveal.textContent = page.id === 'vocabulary' ? 'Reveal next answer' : 'Reveal answers';
+      document.querySelectorAll('.think-swap-card.show-thinking').forEach(card => card.classList.remove('show-thinking'));
+      document.querySelectorAll('.i-do-page.thinking-visible').forEach(section => section.classList.remove('thinking-visible'));
+      document.querySelectorAll('.i-do-page .model-step.step-visible').forEach(step => step.classList.remove('step-visible'));
+      document.querySelectorAll('.vocab-card.revealed').forEach(card => card.classList.remove('revealed'));
+      pages.forEach(item => item.classList.toggle('active', item === page));
+      tabs.forEach(tab => { const selected = tab.dataset.page === page.id; tab.classList.toggle('active', selected); tab.setAttribute('aria-current', selected ? 'page' : 'false'); });
+      phaseSignal.textContent = page.dataset.phase;
+      behaviourSignal.textContent = page.dataset.behaviour;
+      responseSignal.hidden = !page.dataset.response;
+      responseSignal.textContent = page.dataset.response;
+      if (updateHash) history.replaceState(null, '', '#' + page.id);
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    tabs.forEach(tab => tab.addEventListener('click', () => showPage(tab.dataset.page)));
+    function prependAnswerContext(answer, contextText) {
+      if (!answer || !contextText || answer.querySelector('.answer-context')) return;
+      const context = document.createElement('div'); context.className='answer-context'; context.textContent=contextText; answer.prepend(context);
+    }
+    document.querySelectorAll('.question-list').forEach(list => [...list.querySelectorAll('.question')].forEach((card,index) => {
+      const title=card.querySelector('h3')?.textContent.replace(/\s+/g,' ').trim();
+      const prompt=card.querySelector(':scope > p')?.textContent.replace(/\s+/g,' ').trim();
+      prependAnswerContext(card.querySelector(':scope > .answer'), title + ' · Q' + (index+1) + ' — ' + prompt);
+    }));
+    document.querySelectorAll('.swap-card').forEach(card => prependAnswerContext(card.querySelector('.swap-answer'), card.dataset.answerContext));
+    const vocabCards=[...document.querySelectorAll('.vocab > div')];
+    vocabCards.forEach((card,index)=>card.classList.add('vocab-card', index%2===0 ? 'hide-definition' : 'hide-term'));
+    const iDoPage=document.getElementById('i-do');
+    const iDoCard=iDoPage?.querySelector('.think-swap-card');
+    const iDoSteps=[...(iDoPage?.querySelectorAll('.model-step') || [])];
+    const clickRevealPages=new Set(['do-now','we-do','you-do']);
+
+    document.addEventListener('click', event => {
+      const activePage=document.querySelector('.page.active');
+      if (!activePage || activePage.id==='exit-ticket') return;
+      event.preventDefault(); event.stopPropagation();
+      if (activePage.id==='i-do') {
+        const nextStep=iDoSteps.find(step=>!step.classList.contains('step-visible'));
+        if (nextStep) { nextStep.classList.add('step-visible'); return; }
+        if (iDoCard && !iDoCard.classList.contains('show-thinking')) { iDoCard.classList.add('show-thinking'); iDoPage.classList.add('thinking-visible'); return; }
+      }
+      if (activePage.id==='vocabulary') {
+        const nextCard=vocabCards.find(card=>!card.classList.contains('revealed'));
+        if (nextCard) { nextCard.classList.add('revealed'); const remaining=vocabCards.filter(card=>!card.classList.contains('revealed')).length; reveal.textContent=remaining===0?'Continue':'Reveal next answer'; return; }
+      }
+      if (clickRevealPages.has(activePage.id) && !document.body.classList.contains('show-answers')) { document.body.classList.add('show-answers'); reveal.setAttribute('aria-pressed','true'); reveal.textContent='Continue'; return; }
+      const index=order.indexOf(activePage.id); if(index<order.length-1) showPage(order[index+1]);
+    }, true);
+
+    document.querySelectorAll('.exit-choice').forEach(choice => choice.addEventListener('click', () => {
+      document.querySelectorAll('.exit-choice').forEach(button=>button.setAttribute('aria-pressed',String(button===choice)));
+      document.getElementById('exitStatus').textContent='Selected: '+choice.dataset.choice;
+    }));
+    document.addEventListener('keydown', event => {
+      if(event.target.matches('textarea,input')) return;
+      const active=document.querySelector('.page.active'); const index=order.indexOf(active.id);
+      if(event.key==='ArrowRight'&&index<order.length-1) showPage(order[index+1]);
+      if(event.key==='ArrowLeft'&&index>0) showPage(order[index-1]);
+    });
+    showPage('do-now');
+  </script>
+</body>
+</html>
