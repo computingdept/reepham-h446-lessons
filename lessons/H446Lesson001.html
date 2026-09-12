@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="H446 Lesson 001 on data types and data representation, using OCR past-paper questions">
+  <title>H446 Lesson 001 — Data Types and Representation</title>
+  <style>
+    :root {
+      --reepham: #176b4a;
+      --reepham-dark: #0f4e36;
+      --ink: #16251f;
+      --muted: #52645c;
+      --line: #d9e2dd;
+      --paper: #ffffff;
+      --wash: #f4f7f5;
+      --blue-bg: #c9e9f5;
+      --blue-border: #24699d;
+      --blue-ink: #153f69;
+      --green-bg: #d9f2cd;
+      --green-border: #23652f;
+      --green-ink: #275c1d;
+      --orange-bg: #fae2d5;
+      --orange-border: #9b430f;
+      --orange-ink: #87350c;
+      --shadow: 0 8px 24px rgba(18, 45, 33, .09);
+      --teacher-nav-width: 176px;
+    }
+
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--wash);
+      color: var(--ink);
+      font-family: Inter, Aptos, "Segoe UI", Arial, sans-serif;
+      font-size: clamp(17px, 1.35vw, 23px);
+      line-height: 1.48;
+    }
+
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+    :focus-visible { outline: 4px solid #f2bf3b; outline-offset: 3px; }
+
+    .control-btn {
+      border: 2px solid var(--reepham);
+      border-radius: .55rem;
+      background: var(--reepham);
+      color: white;
+      padding: .5rem .8rem;
+      font-weight: 800;
+    }
+    .control-btn[aria-pressed="true"] { background: #fff; color: var(--reepham-dark); }
+
+    .navwrap {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 18;
+      width: var(--teacher-nav-width);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      background: rgba(255,255,255,.98);
+      border-right: 1px solid var(--line);
+      box-shadow: 4px 0 14px rgba(10,40,26,.06);
+      scrollbar-width: thin;
+    }
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: .18rem;
+      padding: .65rem .55rem .5rem;
+    }
+    .nav button {
+      border: 0;
+      border-left: 5px solid transparent;
+      background: transparent;
+      color: #385048;
+      padding: .55rem .55rem;
+      font-size: .7em;
+      font-weight: 800;
+      text-align: left;
+    }
+    .nav button.active {
+      color: var(--reepham-dark);
+      border-left-color: var(--reepham);
+      background: #edf7f2;
+      border-radius: .35rem;
+    }
+    .nav-tools { margin-top: auto; padding: .65rem .55rem; border-top: 1px solid var(--line); }
+    .nav-tools .control-btn { width: 100%; padding: .55rem .35rem; font-size: .68em; }
+
+    .signal-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 15;
+      margin-left: var(--teacher-nav-width);
+      padding: .65rem clamp(1rem, 3vw, 3rem);
+      background: linear-gradient(180deg, rgba(244,247,245,.99), rgba(244,247,245,.92));
+      border-bottom: 1px solid var(--line);
+    }
+    .signal-bar {
+      max-width: 1500px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .signals { display: flex; align-items: center; flex-wrap: wrap; gap: .55rem; }
+    .signal {
+      min-width: 150px;
+      min-height: 54px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: .38rem .9rem;
+      border: 2px solid;
+      border-radius: .55rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,.16);
+      font-size: .91em;
+      font-weight: 850;
+      line-height: 1.08;
+      text-align: center;
+    }
+    .signal.phase { color: var(--blue-ink); border-color: var(--blue-border); background: linear-gradient(135deg,#d7f1fa,var(--blue-bg)); }
+    .signal.behaviour { color: var(--green-ink); border-color: var(--green-border); background: linear-gradient(135deg,#e9f9df,var(--green-bg)); }
+    .signal.response { color: var(--orange-ink); border-color: var(--orange-border); background: linear-gradient(135deg,#fff0e8,var(--orange-bg)); }
+    .step-count { color: var(--muted); font-size: .78em; font-weight: 800; white-space: nowrap; }
+
+    .lesson-footer {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      left: var(--teacher-nav-width);
+      z-index: 12;
+      display: flex;
+      justify-content: flex-end;
+      gap: .45rem;
+      padding: .28rem clamp(1rem, 3vw, 3rem);
+      border-top: 1px solid var(--line);
+      background: rgba(255,255,255,.96);
+      color: var(--muted);
+      font-size: .6em;
+    }
+    .lesson-footer strong { color: var(--reepham-dark); }
+
+    main { max-width: none; margin: 0 0 0 var(--teacher-nav-width); padding: 1.2rem clamp(1rem, 3vw, 3rem) 5rem; }
+    .page { display: none; animation: appear .22s ease-out; }
+    .page.active { display: block; }
+    @keyframes appear { from { opacity: .35; transform: translateY(6px); } }
+    .page-head { margin: 0 0 1rem; }
+    h1 { margin: 0; font-size: clamp(2rem, 4.5vw, 4.5rem); line-height: 1.02; letter-spacing: -.045em; }
+    h2 { margin: 0 0 .65rem; font-size: clamp(1.45rem, 2.5vw, 2.35rem); line-height: 1.1; }
+    h3 { margin: 0 0 .45rem; font-size: 1.1em; }
+    p { margin: .35rem 0 .8rem; }
+    .lead { max-width: 65ch; color: var(--muted); font-size: 1.05em; }
+    .eyebrow { color: var(--reepham); font-size: .72em; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+
+    .grid { display: grid; gap: 1rem; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: .8rem;
+      padding: 1rem 1.1rem;
+      box-shadow: var(--shadow);
+    }
+    .card.accent { border-left: 8px solid var(--reepham); }
+    .card h2, .card h3 { color: var(--reepham-dark); }
+    .question { counter-increment: questions; }
+    .question h3::before { content: counter(questions) ". "; color: var(--reepham); }
+    .question-list { counter-reset: questions; }
+    .do-now-grid { gap: .75rem; }
+    .do-now-grid .card { min-height: clamp(165px, 20vh, 205px); padding: .72rem .9rem; }
+    .do-now-grid .card h3 { margin-bottom: .2rem; }
+    .do-now-grid .card p { margin: .15rem 0 .45rem; }
+    .do-now-grid .write-lines { min-height: clamp(78px, 11vh, 108px); }
+    .challenge-tag {
+      float: right;
+      border: 2px solid var(--orange-border);
+      border-radius: 999px;
+      background: var(--orange-bg);
+      color: var(--orange-ink);
+      padding: .16rem .5rem;
+      font-size: .58em;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .marks { float: right; color: var(--muted); font-weight: 750; font-size: .75em; }
+    .write-lines {
+      width: 100%; min-height: 120px; resize: vertical;
+      border: 2px solid #bccac3; border-radius: .5rem; padding: .7rem;
+      background: repeating-linear-gradient(#fff,#fff 35px,#e4ebe7 36px);
+    }
+    .answer {
+      display: none;
+      margin-top: .7rem;
+      border-left: 6px solid var(--reepham);
+      border-radius: .35rem;
+      background: #eaf6f0;
+      padding: .65rem .8rem;
+      color: #173f2d;
+    }
+    body.show-answers .answer { display: block; }
+    .answer strong { color: var(--reepham-dark); }
+    .swap-card { min-height: 250px; }
+    .swap-card .swap-answer {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+    body.show-answers .swap-card {
+      border: 2px solid #8eb4a1;
+      border-left: 8px solid var(--reepham);
+      background: #edf8f2;
+      box-shadow: 0 4px 12px rgba(18, 75, 49, .09);
+    }
+    body.show-answers .swap-card .task-view { display: none; }
+    body.show-answers .question {
+      border: 2px solid #8eb4a1;
+      border-left: 8px solid var(--reepham);
+      background: #edf8f2;
+      box-shadow: 0 4px 12px rgba(18, 75, 49, .09);
+    }
+    body.show-answers .question > :not(.answer) { display: none; }
+    body.show-answers .question > .answer {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+    .answer-context {
+      margin: 0 0 .65rem;
+      padding: .48rem .65rem;
+      border: 1px solid #8a9891;
+      border-left: 5px solid #294b63;
+      border-radius: .35rem;
+      background: #f9fbfa;
+      color: #1f3028;
+      font-size: .84em;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .learning-group { padding: 1.05rem 1.15rem; }
+    .learning-group h2 { margin-bottom: .8rem; }
+    .learning-item { padding: .75rem 0; }
+    .learning-item + .learning-item { border-top: 1px solid var(--line); }
+    .learning-item strong { display: block; color: var(--reepham-dark); margin-bottom: .16rem; }
+    .learning-item span { color: var(--muted); font-size: .88em; }
+    ul, ol { margin: .35rem 0 .8rem; padding-left: 1.25em; }
+    li { margin: .22rem 0; }
+
+    .think {
+      position: relative; display: inline-block; margin: .4rem 0;
+      border: 2px solid var(--reepham); border-radius: 999px;
+      color: var(--reepham-dark); background: #fff; padding: .38rem .8rem; font-weight: 850;
+    }
+    .think-panel {
+      display: none; margin-top: .55rem; padding: .65rem .8rem;
+      border-radius: .55rem; background: #edf7f2; border: 1px solid #b7d8c8;
+    }
+    .think[aria-expanded="true"] + .think-panel { display: block; }
+
+    .sticky-layout { display: grid; grid-template-columns: minmax(0, 2.15fr) minmax(270px, .85fr); gap: 1rem; align-items: start; }
+    .reference { position: sticky; top: 202px; background: #fff; border: 2px solid #b8d4c6; border-radius: .75rem; padding: .9rem; box-shadow: var(--shadow); }
+    .reference h3 { color: var(--reepham-dark); }
+    .command { display: grid; grid-template-columns: auto 1fr; gap: .3rem .6rem; font-size: .8em; }
+    .command dt { color: var(--reepham-dark); font-weight: 900; }
+    .command dd { margin: 0; }
+
+    .steps { counter-reset: model; display: grid; gap: .75rem; }
+    .model-step { counter-increment: model; display: grid; grid-template-columns: 3rem 1fr; gap: .7rem; align-items: start; }
+    .model-step::before {
+      content: counter(model); width: 2.4rem; height: 2.4rem; display: grid; place-items: center;
+      background: var(--reepham); color: white; border-radius: 50%; font-weight: 900;
+    }
+    .model-step div { padding-top: .15rem; }
+    .exam-answer { background: #f7faf8; border: 2px dashed #98b5a7; border-radius: .6rem; padding: .85rem; }
+    .improve { border-bottom: 3px solid #f2bf3b; font-weight: 760; }
+    .i-do-page .page-head { margin-bottom: .65rem; }
+    .i-do-page .page-head .lead { margin: .3rem 0 0; max-width: none; }
+    .i-do-page .card { padding: .8rem .95rem; }
+    .i-do-page .steps { gap: .4rem; }
+    .i-do-page { cursor: pointer; }
+    .i-do-page .model-step { display: none; grid-template-columns: 2.55rem 1fr; gap: .55rem; }
+    .i-do-page .model-step.step-visible { display: grid; animation: step-in .18s ease-out; }
+    .i-do-page .model-step::before { width: 2.05rem; height: 2.05rem; }
+    .i-do-page .model-step h3 { margin-bottom: .1rem; }
+    .i-do-page .model-step p { margin: .1rem 0 .3rem; font-size: .88em; }
+    @keyframes step-in { from { opacity: 0; transform: translateY(.25rem); } to { opacity: 1; transform: none; } }
+    .i-do-page .think-panel { font-size: .84em; }
+    .i-do-page .exam-answer { margin-top: .55rem; }
+    .think-swap-card.show-thinking {
+      border: 2px solid #8eb4a1;
+      border-left: 8px solid var(--reepham);
+      background: #edf8f2;
+      box-shadow: 0 4px 12px rgba(18, 75, 49, .09);
+    }
+    .think-swap-card.show-thinking .think-task { display: none; }
+    .think-swap-card.show-thinking .think-panel { display: block; }
+    .i-do-page.thinking-visible .page-head,
+    .i-do-page.thinking-visible .reference { display: none; }
+    .i-do-page.thinking-visible .sticky-layout { display: block; }
+    .i-do-page.thinking-visible .think-swap-card { width: 100%; }
+    .i-do-page.thinking-visible .think-panel { font-size: .92em; line-height: 1.45; }
+    .i-do-page.thinking-visible .exam-answer { padding: 1rem; }
+
+    .you-do-page .page-head { margin-bottom: .55rem; }
+    .you-do-title {
+      white-space: nowrap;
+      font-size: clamp(1.55rem, 2.6vw, 2.65rem);
+      letter-spacing: -.03em;
+    }
+    .you-do-title .title-kicker {
+      color: var(--reepham);
+      font-size: .52em;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .you-do-page .lead { max-width: none; margin: .25rem 0 0; font-size: .82em; }
+    .you-do-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; }
+    .you-do-grid .card { min-height: clamp(195px, 23vh, 235px); padding: .85rem .95rem; }
+    .you-do-grid .card h3 { margin-bottom: .28rem; font-size: 1em; }
+    .you-do-grid .card p { margin: .2rem 0; font-size: .9em; line-height: 1.4; }
+    .you-do-grid .answer { font-size: .84em; line-height: 1.4; }
+    .you-do-grid .answer-context {
+      margin-bottom: .45rem;
+      padding: .42rem .55rem;
+      font-size: .96em;
+      line-height: 1.34;
+    }
+    .exam-ref {
+      display: block;
+      margin-top: .35rem;
+      color: var(--reepham-dark);
+      font-size: .68em;
+      font-weight: 850;
+      letter-spacing: .02em;
+    }
+
+    .vocab { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .65rem; }
+    .vocab div { background: #fff; border: 1px solid var(--line); border-radius: .6rem; padding: .75rem; }
+    .vocab dt { color: var(--reepham-dark); font-weight: 900; }
+    .vocab dd { margin: .2rem 0 0; color: var(--muted); font-size: .87em; }
+    .vocab-card {
+      position: relative;
+      min-height: 4.25rem;
+    }
+    .vocab-card:not(.revealed).hide-term dt,
+    .vocab-card:not(.revealed).hide-definition dd {
+      color: transparent;
+      position: relative;
+      user-select: none;
+    }
+    .vocab-card:not(.revealed).hide-term dt::after,
+    .vocab-card:not(.revealed).hide-definition dd::after {
+      color: #73857c;
+      content: '________________';
+      font-weight: 700;
+      inset: 0;
+      letter-spacing: .08em;
+      position: absolute;
+    }
+    .vocab-head {
+      display: flex;
+      align-items: baseline;
+      gap: .6rem;
+      margin-bottom: .65rem;
+      white-space: nowrap;
+    }
+    .vocab-head h1 { font-size: clamp(1.55rem, 2.5vw, 2.55rem); }
+    .vocab-head .lead { margin: 0; max-width: none; font-size: .72em; }
+
+    .scorebox { display: flex; gap: .7rem; align-items: center; flex-wrap: wrap; padding: .8rem; background: #edf7f2; border-radius: .6rem; }
+    .scorebox input { width: 4.2rem; padding: .3rem; border: 2px solid #7c9c8e; border-radius: .35rem; }
+
+    .exit-head { margin-bottom: .8rem; }
+    .exit-head h1 { font-size: clamp(1.9rem, 3.3vw, 3.4rem); }
+    .exit-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .8rem; }
+    .exit-choice {
+      min-height: 215px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: .25rem;
+      border: 2px solid #aebdb6;
+      border-radius: .8rem;
+      background: #fff;
+      color: var(--ink);
+      padding: .9rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .exit-choice:hover { border-color: var(--reepham); background: #f7fbf9; }
+    .exit-choice[aria-pressed="true"] {
+      border: 4px solid var(--reepham);
+      background: #eaf6f0;
+      box-shadow: 0 0 0 4px #fff, 0 0 0 8px #176b4a;
+    }
+    .exit-icon { font-size: clamp(3.8rem, 7vw, 6.5rem); line-height: 1; }
+    .exit-choice strong { color: var(--reepham-dark); font-size: 1.15em; }
+    .exit-choice span:last-child { color: var(--muted); font-size: .78em; line-height: 1.3; }
+    .exit-status { min-height: 1.4em; margin: .65rem 0 0; color: var(--reepham-dark); font-size: .78em; font-weight: 850; text-align: center; }
+    .next-lesson-card {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      margin-top: .7rem;
+      border-left: 8px solid var(--reepham);
+      padding: .7rem .9rem;
+    }
+    .next-lesson-card h2 { flex: 0 0 auto; margin: 0; font-size: 1.15em; }
+    .next-lesson-card p { margin: 0; font-size: .88em; }
+
+    @media (max-width: 900px) {
+      .navwrap {
+        position: static;
+        width: auto;
+        flex-direction: row;
+        align-items: center;
+        overflow-x: auto;
+        border-right: 0;
+        border-top: 1px solid var(--line);
+        box-shadow: none;
+      }
+      .nav { min-width: max-content; flex-direction: row; gap: .3rem; padding: 0 1rem .65rem; }
+      .nav button { border-left: 0; border-bottom: 4px solid transparent; padding: .45rem .72rem .35rem; text-align: center; }
+      .nav button.active { border-bottom-color: var(--reepham); border-radius: .45rem .45rem 0 0; }
+      .nav-tools { margin: 0; padding: 0 .65rem .5rem 0; border-top: 0; }
+      .nav-tools .control-btn { width: auto; white-space: nowrap; }
+      .signal-wrap { margin-left: 0; }
+      main { margin-left: 0; }
+      .lesson-footer { left: 0; }
+      .grid.two, .grid.three, .vocab, .sticky-layout { grid-template-columns: 1fr; }
+      .you-do-grid { grid-template-columns: 1fr; }
+      .you-do-title { white-space: normal; }
+      .vocab-head { align-items: flex-start; flex-direction: column; white-space: normal; }
+      .exit-options { grid-template-columns: 1fr; }
+      .exit-choice { min-height: 150px; }
+      .next-lesson-card { align-items: flex-start; flex-direction: column; }
+      .reference { position: static; }
+      .signal { min-width: 120px; min-height: 46px; }
+      .signal-wrap { top: 0; }
+    }
+    @media print {
+      .signal-wrap, .think { position: static; }
+      .navwrap, .signal-wrap, .lesson-footer { display: none; }
+      .page { display: block !important; page-break-after: always; }
+      .answer { display: none !important; }
+      body { background: #fff; font-size: 12pt; }
+      .card, .topic { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="navwrap">
+    <nav class="nav" aria-label="Lesson phases">
+      <button class="active" data-page="do-now">Do Now</button>
+      <button data-page="objectives">Objectives</button>
+      <button data-page="new-learning">New Learning</button>
+      <button data-page="i-do">I Do</button>
+      <button data-page="we-do">We Do</button>
+      <button data-page="you-do">You Do</button>
+      <button data-page="vocabulary">Key Vocabulary</button>
+      <button data-page="exit-ticket">Exit Ticket</button>
+    </nav>
+    <div class="nav-tools"><button id="reveal" class="control-btn" type="button" aria-pressed="false">Reveal answers</button></div>
+  </div>
+
+  <div class="signal-wrap" aria-live="polite">
+    <div class="signal-bar">
+      <div class="signals">
+        <div id="phaseSignal" class="signal phase">Do Now</div>
+        <div id="behaviourSignal" class="signal behaviour">Silent Working</div>
+        <div id="responseSignal" class="signal response" hidden></div>
+      </div>
+      <time id="lessonDate" class="step-count"></time>
+    </div>
+  </div>
+
+  <main>
+    <section id="do-now" class="page active" data-phase="Do Now" data-behaviour="Silent Working" data-response="MWB">
+      <div class="grid two question-list do-now-grid">
+        <article class="card question"><h3>Denary to binary</h3><p>Convert denary <strong>156</strong> into an 8-bit binary number.</p><textarea class="write-lines" aria-label="Answer to denary-to-binary question"></textarea><div class="answer"><strong>Answer:</strong> <code>10011100</code>.</div></article>
+        <article class="card question"><h3>Binary to hexadecimal</h3><p>Convert <strong>10101111</strong> into hexadecimal.</p><textarea class="write-lines" aria-label="Answer to binary-to-hexadecimal question"></textarea><div class="answer"><strong>Answer:</strong> <code>1010 1111</code> = <code>AF</code>.</div></article>
+        <article class="card question"><h3>Binary addition</h3><p>Add <strong>11010110 + 00110111</strong>. Give the stored 8-bit result and state whether overflow occurs.</p><textarea class="write-lines" aria-label="Answer to binary-addition question"></textarea><div class="answer"><strong>Answer:</strong> full result <code>1 00001101</code>; stored result <code>00001101</code>. Overflow occurs because 269 is above 255.</div></article>
+        <article class="card question"><h3>Binary shift <span class="challenge-tag">High Challenge</span></h3><p>Left-shift <strong>00110110</strong> by two places. Give the binary and denary results and explain the effect.</p><textarea class="write-lines" aria-label="Answer to high-challenge binary-shift question"></textarea><div class="answer"><strong>Answer:</strong> <code>11011000</code> = 216. A left shift of two multiplies 54 by 4; no 1 bits are discarded here.</div></article>
+      </div>
+    </section>
+
+    <section id="objectives" class="page" data-phase="Objectives" data-behaviour="Listening" data-response="">
+      <div class="grid three">
+        <article class="card accent"><h2>Select</h2><p>Choose suitable primitive data types and character sets.</p></article>
+        <article class="card accent"><h2>Represent</h2><p>Use binary, hexadecimal, sign and magnitude and two’s-complement representations.</p></article>
+        <article class="card accent"><h2>Manipulate</h2><p>Calculate with binary values and apply shifts and bit masks.</p></article>
+      </div>
+      <article class="card" style="margin-top:1rem"><h2>Success looks like…</h2><ul><li>I select a suitable type or representation.</li><li>I show each conversion or calculation stage.</li><li>I interpret the final bit pattern accurately.</li></ul></article>
+    </section>
+
+    <section id="new-learning" class="page" data-phase="New Learning" data-behaviour="Listening" data-response="Cold Calling">
+      <div class="grid three">
+        <article class="card accent learning-group"><h2>Choose</h2><div class="learning-item"><strong>Primitive types</strong><span>Integer: whole number · Real: fractional value · Character: one symbol · String: characters · Boolean: True/False.</span></div><div class="learning-item"><strong>Character sets</strong><span>ASCII represents a limited set. Unicode represents far more languages, characters and symbols.</span></div><div class="learning-item"><strong>Select precisely</strong><span>Use the type that matches the values and operations the program needs.</span></div></article>
+        <article class="card accent learning-group"><h2>Represent</h2><div class="learning-item"><strong>Number bases</strong><span>Binary uses base 2. Hexadecimal uses base 16; one hexadecimal digit represents four binary bits.</span></div><div class="learning-item"><strong>Negative integers</strong><span>Sign and magnitude stores a sign bit plus magnitude. Two’s complement is formed by inverting the positive value and adding 1.</span></div><div class="learning-item"><strong>Check the range</strong><span>An 8-bit unsigned integer stores 0–255; 8-bit two’s complement stores −128–127.</span></div></article>
+        <article class="card accent learning-group"><h2>Manipulate</h2><div class="learning-item"><strong>Binary arithmetic</strong><span>Add from right to left and carry. Subtraction can be completed by adding a two’s-complement negative.</span></div><div class="learning-item"><strong>Binary shifts</strong><span>Left shifts multiply by powers of two; right shifts divide positive values by powers of two. Discarded bits are lost.</span></div><div class="learning-item"><strong>Bit masks</strong><span>AND tests or clears bits · OR sets bits · XOR toggles bits.</span></div></article>
+      </div>
+    </section>
+
+    <section id="i-do" class="page i-do-page" data-phase="I Do" data-behaviour="Listening" data-response="MWB">
+      <div class="page-head"><div class="eyebrow">Turn method into marks</div><p class="lead"><strong>Question:</strong> Represent denary <strong>−107</strong> using 8-bit sign and magnitude and 8-bit two’s complement. Give one advantage of two’s complement. <span class="marks">[3 marks]</span></p><small class="exam-ref">OCR H446/01 · June 2023 · Q3(b)</small></div>
+      <div class="sticky-layout">
+        <div class="card think-swap-card"><div class="think-task"><div class="steps">
+          <div class="model-step"><div><h3>Write positive 107</h3><p>Use the 8-bit place values: <strong><code>01101011</code></strong>.</p></div></div>
+          <div class="model-step"><div><h3>Sign and magnitude</h3><p>Keep the seven magnitude bits and change the sign bit to 1: <strong><code>11101011</code></strong>.</p></div></div>
+          <div class="model-step"><div><h3>Two’s complement</h3><p>Invert <code>01101011</code> to <code>10010100</code>, then add 1: <strong><code>10010101</code></strong>. One advantage is that arithmetic is easier.</p></div></div>
+        </div></div><div class="think-panel">
+          <div class="answer-context">OCR H446/01 June 2023 Q3(b) — represent −107 in two signed formats and give an advantage. [3 marks]</div>
+          <strong>Start once, then apply the rule for each representation.</strong>
+          <div class="exam-answer"><strong>Model response:</strong> +107 is <code>01101011</code>. Sign and magnitude is <strong><code>11101011</code></strong>. For two’s complement, invert <code>01101011</code> to <code>10010100</code>, then add 1 to give <strong><code>10010101</code></strong>. Two’s complement makes arithmetic easier and has only one representation of zero.</div>
+        </div></div>
+        <aside class="reference"><h3>Keep the methods separate</h3><ol><li>Write positive magnitude.</li><li>Sign and magnitude: set sign bit.</li><li>Two’s complement: invert and add 1.</li></ol></aside>
+      </div>
+    </section>
+
+    <section id="we-do" class="page" data-phase="We Do" data-behaviour="Quiet Working" data-response="MWB">
+      <div class="page-head"><div class="eyebrow">Improve the answer together</div><p class="lead"><strong>Question:</strong> Convert <strong>−124</strong> to 8-bit two’s complement, state another method for storing negative integers, and convert denary <strong>298</strong> to hexadecimal. <span class="marks">[4 marks]</span></p><small class="exam-ref">OCR H446/01 · June 2024 · Q4(a–b)</small></div>
+      <div class="sticky-layout">
+        <div class="grid">
+          <article class="card swap-card" data-answer-context="OCR H446/01 June 2024 Q4(a–b) — signed binary and hexadecimal conversions. [4 marks]"><div class="task-view"><h2>Incomplete answer</h2><p>“−124 is <code>11111100</code>; another method is negative binary; 298 is <code>12A</code>.”</p><p>Identify the incorrect parts and rewrite the response using named methods and visible conversion working.</p><textarea class="write-lines" aria-label="Improved signed-binary and hexadecimal answer"></textarea></div><div class="answer swap-answer"><h2>Mark-scheme response</h2><p><strong>−124:</strong> +124 is <code>01111100</code>; invert and add 1 to obtain <strong><code>10000100</code></strong>. Another accepted representation is <strong>sign and magnitude</strong> or one’s complement. <strong>298 = 18×16 + 10 = <code>12A</code></strong>.</p></div></article>
+          <article class="card swap-card" data-answer-context="Check the two’s-complement conversion for −124."><div class="task-view"><h2>Check it</h2><p>Which intermediate value should appear immediately before adding 1?</p><textarea class="write-lines" aria-label="Two's-complement check answer"></textarea></div><div class="answer swap-answer"><h2>Answer</h2><p><code>01111100</code> inverted is <strong><code>10000011</code></strong>. Adding 1 gives <code>10000100</code>.</p></div></article>
+        </div>
+        <aside class="reference"><h3>Conversion checks</h3><dl class="command"><dt>Two’s complement</dt><dd>Invert all bits, then add 1.</dd><dt>Hexadecimal</dt><dd>Divide by 16 or use binary nibbles.</dd><dt>Range</dt><dd>8-bit signed: −128 to 127.</dd></dl></aside>
+      </div>
+    </section>
+
+    <section id="you-do" class="page you-do-page" data-phase="You Do" data-behaviour="Silent Working" data-response="">
+      <div class="page-head"><h1 class="you-do-title"><span class="title-kicker">Independent exam practice · 25 marks</span> — Show what you can do</h1><p class="lead">Answer independently in your book. Show every conversion and calculation stage.</p></div>
+      <div class="grid question-list you-do-grid">
+        <article class="card question"><h3>Choose data types <span class="marks">[2]</span></h3><p>A database stores <code>CostPerMonth = 12.99</code> and <code>Adverts = false</code>. Identify the most suitable data type for each field.</p><small class="exam-ref">OCR H446/01 · June 2022 · Q2(a)(iii–iv), adapted</small><div class="answer"><strong>Answers:</strong> CostPerMonth: real, decimal, single or double. Adverts: Boolean.</div></article>
+        <article class="card question"><h3>Character sets <span class="marks">[3]</span></h3><p>Give one similarity and two differences between ASCII and Unicode.</p><small class="exam-ref">OCR H446/01 · June 2022 · Q5(e)(ii–iii)</small><div class="answer"><strong>Mark points:</strong> both encode characters using binary; ASCII has 128/256 characters while Unicode has many more; ASCII is 7/8-bit and mainly Latin-based, while Unicode may use more bits and supports worldwide scripts and symbols.</div></article>
+        <article class="card question"><h3>Conversions and shift <span class="marks">[5]</span></h3><p>Convert 189 to 8-bit binary and hexadecimal; convert hex E4 to denary; explain a right shift of three on a positive binary value.</p><small class="exam-ref">OCR H446/01 · June 2025 · Q3(a–b)</small><div class="answer"><strong>Answers:</strong> <code>10111101</code>; <code>BD</code>; 228. A right shift of three divides the value by <code>2³</code>, so by 8.</div></article>
+        <article class="card question"><h3>Hexadecimal and signed values <span class="marks">[5]</span></h3><p>Convert 189 to hexadecimal and unsigned <code>1010101111</code> to hexadecimal. Represent −107 using both signed methods and give one advantage of two’s complement.</p><small class="exam-ref">OCR H446/01 · June 2023 · Q3(a–b)</small><div class="answer"><strong>Answers:</strong> <code>BD</code>; <code>2AF</code>; sign and magnitude <code>11101011</code>; two’s complement <code>10010101</code>. Advantage: easier arithmetic, one zero or slightly larger range.</div></article>
+        <article class="card question"><h3>Conversions and subtraction <span class="marks">[5]</span></h3><p>Convert hex B7E to binary; convert sign-and-magnitude <code>110010101</code> to denary; calculate <code>01101101 − 00110100</code>.</p><small class="exam-ref">OCR H446/01 · June 2022 · Q3(a)</small><div class="answer"><strong>Answers:</strong> <code>101101111110</code>; −149; subtraction result <code>00111001</code>. The subtraction working must be shown for all three marks.</div></article>
+        <article class="card question"><h3>Binary addition and mask <span class="marks">[5]</span></h3><p>Add <code>00110111 + 10011001</code>. Then apply AND mask <code>10101110</code> to byte <code>10100011</code> and state one purpose of the mask.</p><small class="exam-ref">OCR H446/01 · June 2024 Q4(e) and June 2025 Q3(d)</small><div class="answer"><strong>Answers:</strong> addition <code>11010000</code> with carries shown. AND result <code>10100010</code>. The mask can extract, enable or disable selected bits.</div></article>
+      </div>
+    </section>
+
+    <section id="vocabulary" class="page" data-phase="Key Vocabulary" data-behaviour="Listening" data-response="Choral Response">
+      <div class="vocab-head"><div class="eyebrow">Precision matters</div><h1>Say it like a computer scientist</h1><p class="lead">Say the missing keyword or definition before each click. One answer appears at a time, and a card never hides both.</p></div>
+      <dl class="vocab">
+        <div><dt>Integer</dt><dd>A positive or negative whole number, including zero.</dd></div><div><dt>Real</dt><dd>A number that may contain a fractional part.</dd></div><div><dt>Character</dt><dd>One letter, digit or symbol.</dd></div>
+        <div><dt>String</dt><dd>A sequence of characters.</dd></div><div><dt>Boolean</dt><dd>A value with two states, normally True or False.</dd></div><div><dt>Sign and magnitude</dt><dd>The first bit stores the sign; remaining bits store magnitude.</dd></div>
+        <div><dt>Two’s complement</dt><dd>A signed binary system with one zero and arithmetic-compatible negatives.</dd></div><div><dt>Hexadecimal</dt><dd>A base-16 system using digits 0–9 and A–F.</dd></div><div><dt>Unsigned integer</dt><dd>A whole number representation with no negative values.</dd></div>
+        <div><dt>Binary shift</dt><dd>Moving all bits left or right by a stated number of places.</dd></div><div><dt>Bit mask</dt><dd>A bit pattern used with a bitwise operation to test or change selected bits.</dd></div><div><dt>ASCII / Unicode</dt><dd>Character sets that map characters to numeric codes; Unicode has far wider coverage.</dd></div>
+      </dl>
+    </section>
+
+    <section id="exit-ticket" class="page" data-phase="Exit Ticket" data-behaviour="Reflection" data-response="Show Your Hand">
+      <div class="page-head exit-head"><div class="eyebrow">Lesson reflection</div><h1>How did today’s lesson go?</h1><p class="lead">Choose the hand that best matches how confident you feel now.</p></div>
+      <div class="exit-options" role="group" aria-label="Lesson confidence">
+        <button class="exit-choice" type="button" aria-pressed="false" data-choice="Confident — ready to move on"><span class="exit-icon" aria-hidden="true">👍</span><strong>Confident</strong><span>I can select, represent and manipulate the required data.</span></button>
+        <button class="exit-choice" type="button" aria-pressed="false" data-choice="Nearly there — more practice needed"><span class="exit-icon" aria-hidden="true">🫳</span><strong>Nearly there</strong><span>I understand the methods but need more conversion practice.</span></button>
+        <button class="exit-choice" type="button" aria-pressed="false" data-choice="Need support next lesson"><span class="exit-icon" aria-hidden="true">👎</span><strong>Need support</strong><span>I am unsure which method to use or how to show the stages.</span></button>
+      </div>
+      <p id="exitStatus" class="exit-status" aria-live="polite"></p>
+      <article class="card next-lesson-card"><h2>Get ready for next lesson</h2><p>Choose your weakest method—base conversion, signed integers, binary arithmetic, shifts or masks—and complete one worked example before next lesson.</p></article>
+    </section>
+  </main>
+
+  <footer class="lesson-footer"><strong>H446Lesson001 · OCR H446 · 1.4.1</strong><span>Data types and representation</span></footer>
+
+  <script>
+    const order = ['do-now','objectives','new-learning','i-do','we-do','you-do','vocabulary','exit-ticket'];
+    const pages = [...document.querySelectorAll('.page')];
+    const tabs = [...document.querySelectorAll('.nav button')];
+    const phaseSignal = document.getElementById('phaseSignal');
+    const behaviourSignal = document.getElementById('behaviourSignal');
+    const responseSignal = document.getElementById('responseSignal');
+    const lessonDate = document.getElementById('lessonDate');
+    const now = new Date();
+    lessonDate.dateTime = now.toISOString().slice(0, 10);
+    lessonDate.textContent = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).format(now);
+
+    function showPage(id, updateHash = true) {
+      const page = document.getElementById(id) || document.getElementById('do-now');
+      document.body.classList.remove('show-answers');
+      const revealControl = document.getElementById('reveal');
+      revealControl.setAttribute('aria-pressed', 'false');
+      revealControl.textContent = page.id === 'vocabulary' ? 'Reveal next answer' : 'Reveal answers';
+      document.querySelectorAll('.think-swap-card.show-thinking').forEach(card => card.classList.remove('show-thinking'));
+      document.querySelectorAll('.i-do-page.thinking-visible').forEach(section => section.classList.remove('thinking-visible'));
+      document.querySelectorAll('.i-do-page .model-step.step-visible').forEach(step => step.classList.remove('step-visible'));
+      document.querySelectorAll('.vocab-card.revealed').forEach(card => card.classList.remove('revealed'));
+      pages.forEach(item => item.classList.toggle('active', item === page));
+      tabs.forEach(tab => {
+        const selected = tab.dataset.page === page.id;
+        tab.classList.toggle('active', selected);
+        tab.setAttribute('aria-current', selected ? 'page' : 'false');
+      });
+      phaseSignal.textContent = page.dataset.phase;
+      behaviourSignal.textContent = page.dataset.behaviour;
+      const response = page.dataset.response;
+      responseSignal.hidden = !response;
+      responseSignal.textContent = response;
+      if (updateHash) history.replaceState(null, '', '#' + page.id);
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    tabs.forEach(tab => tab.addEventListener('click', () => showPage(tab.dataset.page)));
+
+    function prependAnswerContext(answer, contextText) {
+      if (!answer || !contextText || answer.querySelector('.answer-context')) return;
+      const context = document.createElement('div');
+      context.className = 'answer-context';
+      context.textContent = contextText;
+      answer.prepend(context);
+    }
+
+    document.querySelectorAll('.question-list').forEach(list => {
+      [...list.querySelectorAll('.question')].forEach((card, index) => {
+        const title = card.querySelector('h3')?.textContent.replace(/\s+/g, ' ').trim();
+        const prompt = card.querySelector(':scope > p')?.textContent.replace(/\s+/g, ' ').trim();
+        prependAnswerContext(card.querySelector(':scope > .answer'), `${title} · Q${index + 1} — ${prompt}`);
+      });
+    });
+
+    document.querySelectorAll('.swap-card').forEach(card => {
+      prependAnswerContext(card.querySelector('.swap-answer'), card.dataset.answerContext);
+    });
+
+    const iDoPage = document.getElementById('i-do');
+    const iDoCard = iDoPage.querySelector('.think-swap-card');
+    const iDoSteps = [...iDoPage.querySelectorAll('.model-step')];
+    const clickRevealPages = new Set(['do-now', 'we-do', 'you-do']);
+
+    document.addEventListener('click', event => {
+      const activePage = document.querySelector('.page.active');
+      if (!activePage || activePage.id === 'exit-ticket') return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (activePage.id === 'i-do') {
+        const nextStep = iDoSteps.find(step => !step.classList.contains('step-visible'));
+        if (nextStep) {
+          nextStep.classList.add('step-visible');
+          return;
+        }
+        if (!iDoCard.classList.contains('show-thinking')) {
+          iDoCard.classList.add('show-thinking');
+          iDoPage.classList.add('thinking-visible');
+          return;
+        }
+      }
+
+      if (activePage.id === 'vocabulary') {
+        const nextCard = vocabCards.find(card => !card.classList.contains('revealed'));
+        if (nextCard) {
+          nextCard.classList.add('revealed');
+          const remaining = vocabCards.filter(card => !card.classList.contains('revealed')).length;
+          reveal.setAttribute('aria-pressed', String(remaining === 0));
+          reveal.textContent = remaining === 0 ? 'Continue' : 'Reveal next answer';
+          return;
+        }
+      }
+
+      if (clickRevealPages.has(activePage.id) && !document.body.classList.contains('show-answers')) {
+        document.body.classList.add('show-answers');
+        reveal.setAttribute('aria-pressed', 'true');
+        reveal.textContent = 'Hide answers';
+        return;
+      }
+
+      const index = order.indexOf(activePage.id);
+      if (index < order.length - 1) showPage(order[index + 1]);
+    }, true);
+
+    const vocabCards = [...document.querySelectorAll('.vocab > div')];
+    vocabCards.forEach((card, index) => {
+      const hidesDefinition = index % 2 === 0;
+      card.classList.add('vocab-card', hidesDefinition ? 'hide-definition' : 'hide-term');
+    });
+
+    const exitChoices = [...document.querySelectorAll('.exit-choice')];
+    const exitStatus = document.getElementById('exitStatus');
+    exitChoices.forEach(choice => choice.addEventListener('click', () => {
+      exitChoices.forEach(button => button.setAttribute('aria-pressed', String(button === choice)));
+      exitStatus.textContent = `Selected: ${choice.dataset.choice}`;
+    }));
+
+    const reveal = document.getElementById('reveal');
+    reveal.addEventListener('click', () => {
+      const showing = document.body.classList.toggle('show-answers');
+      reveal.setAttribute('aria-pressed', String(showing));
+      const vocabularyActive = document.querySelector('.page.active')?.id === 'vocabulary';
+      reveal.textContent = vocabularyActive
+        ? 'Reveal next answer'
+        : (showing ? 'Hide answers' : 'Reveal answers');
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.target.matches('textarea, input')) return;
+      const active = document.querySelector('.page.active');
+      const index = order.indexOf(active.id);
+      if (event.key === 'ArrowRight' && index < order.length - 1) showPage(order[index + 1]);
+      if (event.key === 'ArrowLeft' && index > 0) showPage(order[index - 1]);
+    });
+
+    showPage('do-now');
+  </script>
+</body>
+</html>
