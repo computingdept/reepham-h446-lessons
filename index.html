@@ -70,6 +70,12 @@
     .practice-section { scroll-margin-top:1rem; margin-top:2.5rem; padding-top:1.25rem; border-top:3px solid var(--green); }
     .section-summary { max-width:65ch; margin:.42rem 0 1rem; color:var(--muted); line-height:1.45; }
     .practice-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.78rem; }
+    .lab-intro { margin:1rem 0 1.2rem; padding:1rem; border:1px solid #a9c9b6; border-radius:.78rem; background:var(--green-soft); display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+    .lab-intro strong { display:block; margin-top:.28rem; color:var(--green-dark); font-size:1.06rem; }
+    .method-tags { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:.36rem; }
+    .method-tags span { border:1px solid #9fc0ad; border-radius:999px; padding:.32rem .52rem; background:#fff; color:var(--green-dark); font-size:.76rem; font-weight:900; }
+    .lab-group + .lab-group { margin-top:1.25rem; }
+    .lab-group > h3 { margin:0 0 .65rem; color:var(--green-dark); font-size:1rem; letter-spacing:.01em; }
     .practice-card { min-height:158px; border:1px solid var(--line); border-radius:.78rem; padding:1rem; background:var(--paper); box-shadow:0 4px 14px rgba(13,76,52,.05); display:flex; flex-direction:column; gap:.42rem; }
     .practice-card h3 { margin:0; color:var(--green-dark); font-size:1.07rem; line-height:1.18; }
     .practice-card p { margin:0; color:var(--muted); font-size:.89rem; line-height:1.38; }
@@ -127,8 +133,9 @@
   <nav class="primary-nav" aria-label="Hub navigation">
     <div class="primary-nav-inner">
       <a href="#lessons" aria-current="page">Lessons</a>
-      <a href="#skills-practice">Skills Practice</a>
+      <a href="#skills-practice">Skills Lab</a>
       <a href="#exam-practice">Exam Practice</a>
+      <a href="#programming-project">Programming Project</a>
     </div>
   </nav>
 
@@ -149,7 +156,7 @@
   <main>
     <section id="lessons" aria-labelledby="yearHeading">
       <div class="section-head">
-        <div><p class="section-kicker">Lesson sequence</p><h2 id="yearHeading">Year 10 lessons</h2></div>
+        <div><p class="section-kicker">Lesson sequence</p><h2 id="yearHeading">Year 12 lessons</h2></div>
         <div id="progress" class="progress" aria-live="polite"></div>
       </div>
       <div id="terms"></div>
@@ -158,16 +165,46 @@
 
     <section id="skills-practice" class="practice-section" aria-labelledby="practiceHeading">
       <div class="section-head">
-        <div><p class="section-kicker">Independent practice</p><h2 id="practiceHeading">Skills Practice</h2></div>
+        <div><p class="section-kicker">A Level practice</p><h2 id="practiceHeading">Skills Lab</h2></div>
       </div>
-      <p class="section-summary">Short, repeatable practice pages will sit here. Students will choose a skill, practise it repeatedly and receive immediate feedback.</p>
-      <div class="practice-grid">
-        <article class="practice-card"><span class="card-label">First set</span><h3>Data representation</h3><p>Binary, hexadecimal, character sets, signed integers and bitwise manipulation.</p><span class="status">Planned</span></article>
-        <article class="practice-card"><span class="card-label">First set</span><h3>Floating-point arithmetic</h3><p>Normalisation, positive and negative values, addition and subtraction.</p><span class="status">Planned</span></article>
-        <article class="practice-card"><span class="card-label">First set</span><h3>C# code tracing</h3><p>Read, predict, correct and improve runnable C# console programs.</p><span class="status">Planned</span></article>
-        <article class="practice-card"><span class="card-label">First set</span><h3>Data structures</h3><p>Trace, select and operate on stacks, queues, lists, graphs, trees and hash tables.</p><span class="status">Planned</span></article>
-        <article class="practice-card"><span class="card-label">First set</span><h3>Boolean logic and K-maps</h3><p>Expressions, truth tables, logic circuits and Karnaugh-map simplification.</p><span class="status">Planned</span></article>
-        <article class="practice-card"><span class="card-label">First set</span><h3>Algorithms</h3><p>Trace, analyse and implement algorithms using OCR-style pseudocode and C#.</p><span class="status">Planned</span></article>
+      <p class="section-summary">This is not a GCSE recall area. Each lab develops an A Level method: calculate, trace, construct, refine, justify and then apply the skill to OCR H446-style questions.</p>
+      <div class="lab-intro" role="note">
+        <div>
+          <span class="card-label">How the lab works</span>
+          <strong>Build fluency first. Then earn marks.</strong>
+        </div>
+        <div class="method-tags" aria-label="A Level practice methods">
+          <span>Calculate</span><span>Trace</span><span>Construct</span><span>Refine</span><span>Justify</span>
+        </div>
+      </div>
+
+      <div class="lab-group">
+        <h3>Computer systems and formal methods</h3>
+        <div class="practice-grid">
+          <article class="practice-card"><span class="card-label">Calculation lab</span><h3>Data representation</h3><p>Work through signed integers, bitwise operations, floating-point range and precision, then complete arithmetic with clear working.</p><span class="status">Planned</span></article>
+          <article class="practice-card"><span class="card-label">Formal reasoning lab</span><h3>Boolean logic and circuits</h3><p>Derive expressions, simplify with laws and K-maps, and connect truth tables to gates, adders and flip-flops.</p><span class="status">Planned</span></article>
+          <article class="practice-card"><span class="card-label">System reasoning lab</span><h3>Computer architecture</h3><p>Explain how processors, registers, memory and performance features work together in unfamiliar scenarios.</p><span class="status">Planned</span></article>
+          <article class="practice-card"><span class="card-label">Apply to context</span><h3>Networks and data exchange</h3><p>Select and justify protocols, layers, transmission methods and protection for realistic technical situations.</p><span class="status">Planned</span></article>
+        </div>
+      </div>
+
+      <div class="lab-group">
+        <h3>Algorithms and programming</h3>
+        <div class="practice-grid">
+          <article class="practice-card"><span class="card-label">Read and trace</span><h3>C# code tracing</h3><p>Predict output, follow state changes and explain exactly why a complete .NET Fiddle-ready program behaves as it does.</p><span class="status">Planned</span></article>
+          <article class="practice-card"><span class="card-label">Refine and repair</span><h3>C# code improvement</h3><p>Find syntax, logic and runtime issues; improve weak solutions and compare them with a full working model.</p><span class="status">Planned</span></article>
+          <article class="practice-card"><span class="card-label">Design and analyse</span><h3>Algorithms</h3><p>Trace, implement and compare search, sort and recursive algorithms; select a suitable approach and justify it.</p><span class="status">Planned</span></article>
+          <article class="practice-card"><span class="card-label">Model and manipulate</span><h3>Data structures</h3><p>Create, traverse, add and remove data from collections, linked structures, graphs, trees, BSTs and hash tables.</p><span class="status">Planned</span></article>
+        </div>
+      </div>
+
+      <div class="lab-group">
+        <h3>Exam and project thinking</h3>
+        <div class="practice-grid">
+          <article class="practice-card"><span class="card-label">Develop with purpose</span><h3>Software development</h3><p>Move from a problem statement to decomposition, design, testing, debugging and evaluation using technical vocabulary.</p><span class="status">Planned</span></article>
+          <article class="practice-card"><span class="card-label">Build a judgement</span><h3>Legal, moral and ethical issues</h3><p>Plan balanced extended responses that make a clear judgement and support it with accurate computing knowledge.</p><span class="status">Planned</span></article>
+          <article class="practice-card"><span class="card-label">Turn method into marks</span><h3>Extended-response builder</h3><p>Practise interpreting command words, planning answers and checking them against the relevant OCR mark-scheme points.</p><span class="status">Planned</span></article>
+        </div>
       </div>
     </section>
 
@@ -175,11 +212,23 @@
       <div class="section-head">
         <div><p class="section-kicker">Assessment preparation</p><h2 id="examHeading">Exam Practice</h2></div>
       </div>
-      <p class="section-summary">Paper-specific question sets and answer support will be added here, separated from skills practice so revision is easy to target.</p>
+      <p class="section-summary">Each set will use genuine OCR H446 question wording where permitted, show the paper reference and marks, and reveal the mark-scheme method in stages.</p>
       <div class="exam-grid">
         <article class="exam-card"><span class="card-label">H446/01</span><h3>Paper 1: Computer systems</h3><p>Data representation, communication, architecture, data structures and Boolean algebra.</p><span class="status">Planned</span></article>
         <article class="exam-card"><span class="card-label">H446/02</span><h3>Paper 2: Algorithms and programming</h3><p>Algorithms, programming techniques, C# problem solving and exam practice.</p><span class="status">Planned</span></article>
         <article class="exam-card"><span class="card-label">H446/03</span><h3>Programming project</h3><p>Analysis, design, development, testing and evaluation support.</p><span class="status">Planned</span></article>
+      </div>
+    </section>
+
+    <section id="programming-project" class="practice-section" aria-labelledby="projectHeading">
+      <div class="section-head">
+        <div><p class="section-kicker">H446/03</p><h2 id="projectHeading">Programming Project</h2></div>
+      </div>
+      <p class="section-summary">Project support is deliberately separate from exam practice: it will help students plan, evidence and evaluate their own substantial programmed solution.</p>
+      <div class="exam-grid">
+        <article class="exam-card"><span class="card-label">Plan</span><h3>Analysis and design</h3><p>Requirements, measurable success criteria, decomposition, data design and justified technical choices.</p><span class="status">Planned</span></article>
+        <article class="exam-card"><span class="card-label">Build</span><h3>Development and testing</h3><p>Versioned development, purposeful test evidence, debugging and an explanation of important implementation decisions.</p><span class="status">Planned</span></article>
+        <article class="exam-card"><span class="card-label">Review</span><h3>Evaluation and documentation</h3><p>Evaluate against each criterion, identify limitations and prepare a clear technical guide for the finished program.</p><span class="status">Planned</span></article>
       </div>
     </section>
   </main>
@@ -198,31 +247,31 @@
     };
 
     const programmes = {
-      10: {
+      12: {
         start: 1,
         terms: [
-          {name:'Autumn 1',count:13},
-          {name:'Autumn 2',count:11},
-          {name:'Spring 1',count:12},
-          {name:'Spring 2',count:15},
-          {name:'Summer 1',count:11},
-          {name:'Summer 2',count:10,note:'Includes Year 11 bridge, retrieval and reflection'}
+          {name:'Autumn 1',count:35},
+          {name:'Autumn 2',count:35},
+          {name:'Spring 1',count:30},
+          {name:'Spring 2',count:25},
+          {name:'Summer 1',count:35},
+          {name:'Summer 2',count:20,note:'Includes two weeks of work experience'}
         ]
       },
-      11: {
-        start: 73,
+      13: {
+        start: 181,
         terms: [
-          {name:'Autumn 1',count:18},
-          {name:'Autumn 2',count:14},
-          {name:'Spring 1',count:10},
-          {name:'Spring 2',count:10},
-          {name:'Summer 1',count:18,note:'Revision and examinations'},
+          {name:'Autumn 1',count:35},
+          {name:'Autumn 2',count:35},
+          {name:'Spring 1',count:30},
+          {name:'Spring 2',count:25,note:'Final taught content and retrieval'},
+          {name:'Summer 1',count:15,note:'Revision and examinations'},
           {name:'Summer 2',count:0,note:'Course complete — public examinations'}
         ]
       }
     };
 
-    let selectedYear = 10;
+    let selectedYear = 12;
     let selectedView = 'all';
     const pad = n => String(n).padStart(3,'0');
 
