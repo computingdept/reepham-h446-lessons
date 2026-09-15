@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="OCR H446 Year 12 C# lesson on number conversions and binary arithmetic.">
-<title>H446 Lesson 008 | C# Number Conversions</title>
+<meta name="description" content="OCR H446 Year 12 C# lesson on explicit number-conversion algorithms and binary arithmetic.">
+<title>H446 Lesson 008 | C# Number Algorithms</title>
 <style>
 :root{--g:#176b4a;--gd:#0f4e36;--ink:#16251f;--muted:#52645c;--line:#d9e2dd;--paper:#fff;--wash:#f4f7f5;--blue:#c9e9f5;--orange:#fae2d5;--rail:176px;--shadow:0 8px 24px rgba(18,45,33,.09)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--wash);color:var(--ink);font-family:Inter,Aptos,"Segoe UI",Arial,sans-serif;font-size:clamp(17px,1.35vw,23px);line-height:1.42}button{font:inherit;cursor:pointer}:focus-visible{outline:4px solid #f2bf3b;outline-offset:3px}code,pre{font-family:Consolas,"SFMono-Regular",monospace}
@@ -51,121 +51,171 @@ main{margin-left:var(--rail);padding:1.15rem clamp(1rem,3vw,3rem) 4.5rem}.page{d
 
 <section id="objectives" class="page" data-phase="Objectives" data-behaviour="Listening" data-response="">
   <div class="grid three">
-    <article class="card accent"><h2>Read text</h2><p>Store number characters in a C# <code>string</code> and explain why quotation marks matter.</p></article>
-    <article class="card accent"><h2>Convert bases</h2><p>Use C# to move between denary, binary and hexadecimal accurately.</p></article>
-    <article class="card accent"><h2>Check arithmetic</h2><p>Write code that adds and subtracts binary values, then formats the result as 8-bit binary.</p></article>
+    <article class="card accent"><h2>Read strings</h2><p>Use <code>string</code>, <code>Length</code>, <code>Substring</code> and <code>int.Parse</code> to handle number characters.</p></article>
+    <article class="card accent"><h2>Build conversions</h2><p>Use <code>for</code>/<code>while</code>, <code>%</code>, <code>/</code> and functions to move between binary, denary and hexadecimal.</p></article>
+    <article class="card accent"><h2>Check arithmetic</h2><p>Convert binary strings, use <code>+</code> or <code>-</code>, then build an 8-bit binary answer.</p></article>
   </div>
-  <article class="card" style="margin-top:.9rem"><h2>Success looks like…</h2><p>I can choose the correct base in a conversion method, explain the difference between text and an integer, and use a program to check an H446 number-representation answer.</p></article>
+  <article class="card" style="margin-top:.9rem"><h2>Success looks like…</h2><p>I can explain the C# equivalent of OCR pseudocode, trace a conversion loop, and use a program to check an H446 number-representation answer without relying on a shortcut conversion method.</p></article>
 </section>
 
 <section id="new-learning" class="page" data-phase="New Learning" data-behaviour="Listening" data-response="Cold Calling">
   <div class="grid two">
-    <article class="card accent"><h2>1. Numbers typed or read in are text</h2><div class="learning-item"><strong>Quotation marks make a string</strong><span><code>"189"</code> and <code>"10101111"</code> are characters, not values C# can calculate with yet.</span><span class="syntax">string binaryText = "10101111";</span></div><div class="learning-item"><strong>Hexadecimal is also text</strong><span>A result such as <code>"BD"</code> contains a letter, so it must be a string.</span></div></article>
-    <article class="card accent"><h2>2. Convert text into an integer</h2><div class="learning-item"><strong>Tell C# which base to read</strong><span>Use base <code>2</code> for binary and base <code>16</code> for hexadecimal.</span><span class="syntax">int value = Convert.ToInt32(binaryText, 2);</span></div><div class="learning-item"><strong>Denary is the default</strong><span>For denary text use <code>Convert.ToInt32(denaryText)</code>.</span></div></article>
-    <article class="card accent"><h2>3. Format an integer for output</h2><div class="learning-item"><strong>Hexadecimal output</strong><span><code>"X"</code> formats upper-case hexadecimal. <code>"X2"</code> keeps two digits, so five becomes <code>05</code>.</span><span class="syntax">string hex = value.ToString("X2");</span></div><div class="learning-item"><strong>Binary output</strong><span>Use base <code>2</code>, then add leading zeroes for an 8-bit result.</span><span class="syntax">Convert.ToString(value, 2).PadLeft(8, '0')</span></div></article>
-    <article class="card accent"><h2>4. Arithmetic happens after conversion</h2><div class="learning-item"><strong>Work with integers</strong><span>Convert both binary strings to integers, use <code>+</code> or <code>-</code>, then format the result back to binary.</span></div><div class="learning-item"><strong>Keep the range visible</strong><span>An unsigned 8-bit result above 255 is overflow. Do not hide it by cutting off a bit.</span></div></article>
+    <article class="card accent"><h2>1. C# that transfers to OCR pseudocode</h2><div class="learning-item"><strong>Use direct counterparts</strong><span>OCR uses <code>print</code>, <code>int</code>, <code>.length</code> and <code>.subString</code>. In C#, use <code>Console.WriteLine</code>, <code>int.Parse</code>, <code>.Length</code> and <code>.Substring</code>.</span><span class="syntax">string binaryText = "10101111";</span></div><div class="learning-item"><strong>Quotation marks make a string</strong><span><code>"189"</code>, <code>"10101111"</code> and <code>"BD"</code> are characters. A calculation needs an <code>int</code>.</span></div></article>
+    <article class="card accent"><h2>2. Read a binary string one character at a time</h2><div class="learning-item"><strong>Build the denary value</strong><span>Move left to right. Multiply the value so far by 2, then add the next bit.</span><span class="syntax">int bit = int.Parse(binaryText.Substring(position, 1));<br>denary = denary * 2 + bit;</span></div><div class="learning-item"><strong>OCR link</strong><span>This is the C# form of <code>int(text.subString(position, 1))</code> inside a count-controlled loop.</span></div></article>
+    <article class="card accent"><h2>3. Build hexadecimal with remainders</h2><div class="learning-item"><strong>Use a digit string</strong><span>Remainder <code>13</code> should become <code>D</code>, so read character 13 from a string of hexadecimal digits.</span><span class="syntax">int remainder = denary % 16;<br>hexadecimal = digits.Substring(remainder, 1) + hexadecimal;<br>denary = denary / 16;</span></div><div class="learning-item"><strong>OCR link</strong><span>C# <code>%</code> and integer <code>/</code> are the direct counterparts of OCR <code>MOD</code> and <code>DIV</code>.</span></div></article>
+    <article class="card accent"><h2>4. Arithmetic happens after conversion</h2><div class="learning-item"><strong>Work with integers</strong><span>Convert both binary strings with the loop, use <code>+</code> or <code>-</code>, then repeat remainder/division by 2 to build exactly eight bits.</span><span class="syntax">int bit = denary % 2;<br>denary = denary / 2;</span></div><div class="learning-item"><strong>Keep the range visible</strong><span>An unsigned 8-bit result above 255 is overflow. Do not hide it by cutting off a bit.</span></div></article>
   </div>
 </section>
 
 <section id="i-do" class="page i-do" data-phase="I Do" data-behaviour="Listening" data-response="MWB">
-  <div class="page-head"><div class="eyebrow">Turn knowledge into marks</div><p class="lead"><strong>Question:</strong> Use C# to solve the denary-to-hexadecimal conversion of <strong>189</strong>. The program must begin with <code>"189"</code> as text and output two-digit upper-case hexadecimal. <span class="marks">[3 marks]</span><span class="exam-ref">OCR H446/01 June 2023 Q3(a), adapted to C#</span></p></div>
+  <div class="page-head"><div class="eyebrow">Turn knowledge into marks</div><p class="lead"><strong>Question:</strong> Use C# to solve the denary-to-hexadecimal conversion of <strong>189</strong>. Begin with <code>"189"</code> as text. Use a <code>while</code> loop, <code>%</code>, <code>/</code> and <code>Substring</code> — not a conversion or formatting shortcut. <span class="marks">[3 marks]</span><span class="exam-ref">OCR H446/01 June 2023 Q3(a), adapted to C#</span></p></div>
   <div class="sticky">
     <div class="card i-card">
       <div class="task"><div class="steps">
-        <div class="step"><div><h3>Store the entered characters</h3><p><code>"189"</code> is a <strong>string</strong>. It is text, so C# cannot calculate with it yet.</p></div></div>
-        <div class="step"><div><h3>Convert the denary text</h3><p><code>Convert.ToInt32(denaryText)</code> turns the characters into integer value <strong>189</strong>.</p></div></div>
-        <div class="step"><div><h3>Format it as hexadecimal</h3><p><code>ToString("X2")</code> makes an upper-case hexadecimal string. The <code>2</code> keeps the output at two digits.</p></div></div>
-        <div class="step"><div><h3>Check the representation</h3><p>The output is <strong><code>BD</code></strong>: <code>B = 11</code>, <code>D = 13</code>, so <code>11 × 16 + 13 = 189</code>.</p></div></div>
+        <div class="step"><div><h3>Choose the hexadecimal characters</h3><p>Store the possible digits in order: <code>"0123456789ABCDEF"</code>. A remainder becomes a position in this string.</p></div></div>
+        <div class="step"><div><h3>Take the first remainder</h3><p><code>189 % 16</code> is <strong>13</strong>. <code>digits.Substring(13, 1)</code> is <code>"D"</code>, the right-hand digit.</p></div></div>
+        <div class="step"><div><h3>Divide and repeat</h3><p><code>189 / 16</code> is <strong>11</strong>. Then <code>11 % 16</code> is 11, so prepend <code>"B"</code> to make <code>"BD"</code>.</p></div></div>
+        <div class="step"><div><h3>Stop when the quotient is zero</h3><p>The loop ends. The output is <strong><code>BD</code></strong>: <code>11 × 16 + 13 = 189</code>.</p></div></div>
       </div></div>
-      <div class="model"><div class="answer-context">Convert denary 189 to two-digit upper-case hexadecimal, beginning with the text "189". [3 marks]</div><p class="model-title">Full .NET Fiddle Console model</p><pre class="code">using System;
+      <div class="model"><div class="answer-context">Convert denary 189 to upper-case hexadecimal, beginning with the text "189". [3 marks]</div><p class="model-title">Full .NET Fiddle Console model</p><pre class="code">using System;
 
 public class Program
 {
+    public static string DenaryToHex(int denary)
+    {
+        string digits = "0123456789ABCDEF";
+        string hexadecimal = "";
+
+        while (denary > 0)
+        {
+            int remainder = denary % 16;
+            hexadecimal = digits.Substring(remainder, 1) + hexadecimal;
+            denary = denary / 16;
+        }
+
+        return hexadecimal;
+    }
+
     public static void Main()
     {
         string denaryText = "189";
-        int denary = Convert.ToInt32(denaryText);
-        string hexadecimal = denary.ToString("X2");
-
-        Console.WriteLine(hexadecimal);
+        int denary = int.Parse(denaryText);
+        Console.WriteLine(DenaryToHex(denary));
     }
 }</pre><p class="output">Output: BD</p><p><strong>Why it works:</strong> it changes representations, not the value: <code>"189"</code> → <code>189</code> → <code>"BD"</code>.</p></div>
     </div>
-    <aside class="reference"><h3>Conversion pattern</h3><p><strong>text → integer → formatted text</strong></p><p><code>Convert.ToInt32(text, 2)</code><br>reads binary.</p><p><code>Convert.ToInt32(text, 16)</code><br>reads hexadecimal.</p><p><code>value.ToString("X2")</code><br>outputs two-digit hexadecimal.</p><p><code>Convert.ToString(value, 2)</code><br>outputs binary.</p></aside>
+    <aside class="reference"><h3>C# ↔ OCR pseudocode</h3><p><code>Console.WriteLine(x)</code><br><strong>OCR:</strong> <code>print(x)</code></p><p><code>int.Parse(text)</code><br><strong>OCR:</strong> <code>int(text)</code></p><p><code>text.Length</code><br><strong>OCR:</strong> <code>text.length</code></p><p><code>text.Substring(i, 1)</code><br><strong>OCR:</strong> <code>text.subString(i, 1)</code></p><p><code>%</code> and integer <code>/</code><br><strong>OCR:</strong> <code>MOD</code> and <code>DIV</code></p></aside>
   </div>
 </section>
 
 <section id="we-do" class="page" data-phase="We Do" data-behaviour="Quiet Working" data-response="MWB">
-  <div class="page-head"><div class="eyebrow">Improve the answer together</div><p class="lead"><strong>Question:</strong> Binary <code>"1010101111"</code> should produce hexadecimal <code>2AF</code> and denary <code>687</code>. The program runs, but its two conversion lines are wrong. Refine them. <span class="marks">[4 marks]</span><span class="exam-ref">OCR H446/01 June 2023 Q3(a), adapted to C#</span></p></div>
+  <div class="page-head"><div class="eyebrow">Improve the answer together</div><p class="lead"><strong>Question:</strong> Binary <code>"1010101111"</code> should produce denary <code>687</code> and hexadecimal <code>2AF</code>. The C# program compiles but outputs <code>6</code>. Refine the logic error, then use the I Do function to confirm the hexadecimal value. <span class="marks">[4 marks]</span><span class="exam-ref">OCR H446/01 June 2023 Q3(a), adapted to C#</span></p></div>
   <div class="sticky">
     <article class="card swap-card">
-      <div class="task"><h2>The code runs — but not correctly</h2><pre class="code">using System;
-
-public class Program
+      <div class="task"><h2>The code compiles — but the logic is wrong</h2><pre class="code">public static int BinaryToDenary(string binaryText)
 {
-    public static void Main()
-    {
-        string binaryText = "1010101111";
-        int denary = Convert.ToInt32(binaryText);   // wrong
-        string hexadecimal = denary.ToString("D2"); // wrong
+    int denary = 0;
 
-        Console.WriteLine(hexadecimal);
-        Console.WriteLine(denary);
+    for (int position = 0; position &lt; binaryText.Length; position++)
+    {
+        int bit = int.Parse(binaryText.Substring(position, 1));
+        denary = denary + bit; // logic error
     }
-}</pre><p>What base must C# use to read <code>binaryText</code>? Which format string outputs hexadecimal?</p></div>
-      <div class="answer"><div class="answer-context">Binary 1010101111 to hexadecimal and denary. Correct the two conversion lines. [4 marks]</div><h2>Improved program lines</h2><pre class="code-lite">int denary = Convert.ToInt32(binaryText, 2);
-string hexadecimal = denary.ToString("X");</pre><p><strong>Why:</strong> <code>2</code> tells C# to read the string as binary. <code>"X"</code> tells C# to format the integer as upper-case hexadecimal.</p><p class="output">Output: 2AF
+
+    return denary;
+}</pre><p>What must happen to the value already built before the next bit is added?</p></div>
+      <div class="answer"><div class="answer-context">Binary 1010101111 to hexadecimal and denary. Correct the logic error. [4 marks]</div><h2>Improved line</h2><pre class="code-lite">denary = denary * 2 + bit;</pre><p><strong>Why:</strong> multiplying by 2 moves the value built so far one binary place left; adding <code>bit</code> includes the next character. Use <code>DenaryToHex(denary)</code> from I Do for the linked hexadecimal answer.</p><p class="output">Output: 2AF
 687</p></div>
     </article>
-    <aside class="reference"><h3>Do not confuse the two 2s</h3><p><code>Convert.ToInt32(text, 2)</code><br>The <code>2</code> is the <strong>input base</strong>.</p><p><code>ToString("X2")</code><br>The <code>2</code> is the <strong>minimum output width</strong>.</p><h3 style="margin-top:.75rem">Quick check</h3><p>Group <code>1010101111</code> as <code>10 1010 1111</code> → <code>2AF</code>.</p></aside>
+    <aside class="reference"><h3>Trace rule</h3><p><strong>new value = old value × 2 + next bit</strong></p><p><code>1 → 2 → 5 → 10 → 21 → 42 → 85 → 171 → 343 → 687</code></p><h3 style="margin-top:.75rem">Quick check</h3><p>Group <code>1010101111</code> as <code>10 1010 1111</code> → <code>2AF</code>.</p><p>This uses only string handling, a count-controlled loop and arithmetic that have clear OCR pseudocode equivalents.</p></aside>
   </div>
 </section>
 
 <section id="you-do" class="page" data-phase="You Do" data-behaviour="Silent Working" data-response="Books / .NET Fiddle">
-  <div class="page-head"><h1 class="you-title"><span class="title-kicker">Independent exam practice · 25 marks</span> — Show what you can do</h1><p class="lead">Use C# Console in .NET Fiddle. Paste each short task block inside <code>Main()</code> in the full I Do console wrapper; change only the marked values or lines. The green I Do and Question 6 models are complete runnable programs.</p></div>
+  <div class="page-head"><h1 class="you-title"><span class="title-kicker">Independent exam practice · 25 marks</span> — Show what you can do</h1><p class="lead">Use C# Console in .NET Fiddle. The code deliberately mirrors OCR-style pseudocode: strings, <code>int.Parse</code>, <code>Length</code>, <code>Substring</code>, loops, functions, <code>%</code> and <code>/</code>. The green I Do and Question 6 models are complete runnable programs.</p></div>
   <div class="grid question-list you-grid">
-    <article class="card question"><h3>Trace the conversion <span class="marks">[3]</span></h3><p>State the output and explain why <code>hexadecimal</code> is a string.</p><pre class="code">string denaryText = "189";
-int denary = Convert.ToInt32(denaryText);
-string hexadecimal = denary.ToString("X2");
-Console.WriteLine(hexadecimal);</pre><span class="exam-ref">OCR H446/01 June 2023 Q3(a), adapted</span><div class="answer"><div class="answer-context">State the output and explain why hexadecimal is a string. [3 marks]</div><p><strong>Output:</strong> <code>BD</code>.</p><p><code>hexadecimal</code> is a string because formatting creates text and the value can include letters.</p></div></article>
-    <article class="card question"><h3>Complete denary to hex <span class="marks">[4]</span></h3><p>The program must output <code>12A</code> for denary text <code>"298"</code>. Replace the two marked values.</p><pre class="code">string denaryText = "298";
-int value = 0;           // replace
-string hexadecimal = ""; // replace
-Console.WriteLine(hexadecimal);</pre><span class="exam-ref">OCR H446/01 June 2024 Q4(b), adapted</span><div class="answer"><div class="answer-context">Output 12A for denary text 298. Replace the two marked values. [4 marks]</div><pre class="code-lite">int value = Convert.ToInt32(denaryText);
-string hexadecimal = value.ToString("X");</pre><p class="output">Output: 12A</p></div></article>
-    <article class="card question"><h3>Correct binary to hex <span class="marks">[4]</span></h3><p>Correct the one wrong line so the program outputs <code>2AF</code> and <code>687</code>.</p><pre class="code">string binaryText = "1010101111";
-int denary = Convert.ToInt32(binaryText); // wrong
-string hexadecimal = denary.ToString("X");
-Console.WriteLine(hexadecimal);
-Console.WriteLine(denary);</pre><span class="exam-ref">OCR H446/01 June 2023 Q3(a), adapted</span><div class="answer"><div class="answer-context">Correct the line that converts binary 1010101111. [4 marks]</div><pre class="code-lite">int denary = Convert.ToInt32(binaryText, 2);</pre><p>Base <code>2</code> reads the string as binary; the final lines output <code>2AF</code> and <code>687</code>.</p></div></article>
-    <article class="card question"><h3>Code binary addition <span class="marks">[4]</span></h3><p>Replace the two marked values to output the 8-bit sum of <code>00110111 + 10011001</code>.</p><pre class="code">string first = "00110111";
+    <article class="card question"><h3>Trace the conversion loop <span class="marks">[3]</span></h3><p>State the final output and explain why <code>Substring(position, 1)</code> is needed.</p><pre class="code">string binaryText = "1011";
+int denary = 0;
+for (int position = 0; position &lt; binaryText.Length; position++)
+{
+    int bit = int.Parse(binaryText.Substring(position, 1));
+    denary = denary * 2 + bit;
+}
+Console.WriteLine(denary);</pre><span class="exam-ref">OCR H446/01 June 2023 Q3(a), adapted</span><div class="answer"><div class="answer-context">State the final output and explain the use of Substring. [3 marks]</div><p><strong>Output:</strong> <code>11</code>.</p><p><code>Substring(position, 1)</code> gets the one-character string at the current 0-based position so that <code>int.Parse</code> can turn that bit into an integer.</p></div></article>
+    <article class="card question"><h3>Complete denary to hex <span class="marks">[4]</span></h3><p>Complete the three blanks so <code>DenaryToHex(298)</code> returns <code>12A</code>.</p><pre class="code">int remainder = denary % ____;
+hexadecimal = digits.Substring(____, 1)
+              + hexadecimal;
+denary = denary / ____;</pre><span class="exam-ref">OCR H446/01 June 2024 Q4(b), adapted</span><div class="answer"><div class="answer-context">Complete the conversion steps for denary 298. [4 marks]</div><pre class="code-lite">int remainder = denary % 16;
+hexadecimal = digits.Substring(remainder, 1)
+              + hexadecimal;
+denary = denary / 16;</pre><p><strong>Reason:</strong> remainders select hexadecimal digits; division gives the next value to process.</p><p class="output">Output: 12A</p></div></article>
+    <article class="card question"><h3>Write binary to denary <span class="marks">[4]</span></h3><p>Write <code>BinaryToDenary</code> so these two lines output <code>2AF</code> and <code>687</code>. Use the <code>DenaryToHex</code> method from I Do.</p><pre class="code">string binaryText = "1010101111";
+int denary = BinaryToDenary(binaryText);
+Console.WriteLine(DenaryToHex(denary));
+Console.WriteLine(denary);</pre><span class="exam-ref">OCR H446/01 June 2023 Q3(a), adapted</span><div class="answer"><div class="answer-context">Write BinaryToDenary for 1010101111. [4 marks]</div><pre class="code-lite">public static int BinaryToDenary(string binaryText)
+{
+    int denary = 0;
+    for (int position = 0; position &lt; binaryText.Length; position++)
+    {
+        int bit = int.Parse(binaryText.Substring(position, 1));
+        denary = denary * 2 + bit;
+    }
+    return denary;
+}</pre><p class="output">2AF
+687</p></div></article>
+    <article class="card question"><h3>Code binary addition <span class="marks">[4]</span></h3><p>Assume the two functions are already in the program. Replace both lines to output the 8-bit sum of <code>00110111 + 10011001</code>.</p><pre class="code">string first = "00110111";
 string second = "10011001";
-int total = 0;        // replace
-string result = "";   // replace
-Console.WriteLine(result);</pre><span class="exam-ref">OCR H446/01 June 2024 Q4(e), adapted</span><div class="answer"><div class="answer-context">Output the 8-bit sum of 00110111 and 10011001. [4 marks]</div><pre class="code-lite">int total = Convert.ToInt32(first, 2) + Convert.ToInt32(second, 2);
-string result = Convert.ToString(total, 2).PadLeft(8, '0');</pre><p class="output">Output: 11010000</p></div></article>
-    <article class="card question"><h3>Code binary subtraction <span class="marks">[4]</span></h3><p>Replace the two marked values to output <code>01101101 − 00110100</code> as 8-bit binary.</p><pre class="code">string minuend = "01101101";
+int total = __________________________;
+string result = ______________________;
+Console.WriteLine(result);</pre><span class="exam-ref">OCR H446/01 June 2024 Q4(e), adapted</span><div class="answer"><div class="answer-context">Output the 8-bit sum of 00110111 and 10011001. [4 marks]</div><pre class="code-lite">int total = BinaryToDenary(first) + BinaryToDenary(second);
+string result = DenaryToBinary8(total);</pre><p class="output">Output: 11010000</p></div></article>
+    <article class="card question"><h3>Code binary subtraction <span class="marks">[4]</span></h3><p>Assume the two functions are already in the program. Replace both lines to output <code>01101101 − 00110100</code> as 8-bit binary.</p><pre class="code">string minuend = "01101101";
 string subtrahend = "00110100";
-int difference = 0;   // replace
-string result = "";   // replace
-Console.WriteLine(result);</pre><span class="exam-ref">OCR H446/01 June 2022 Q3(a), adapted</span><div class="answer"><div class="answer-context">Output 01101101 − 00110100 as 8-bit binary. [4 marks]</div><pre class="code-lite">int difference = Convert.ToInt32(minuend, 2) - Convert.ToInt32(subtrahend, 2);
-string result = Convert.ToString(difference, 2).PadLeft(8, '0');</pre><p class="output">Output: 00111001</p></div></article>
-    <article class="card question"><h3>Build both operations <span class="marks">[6]</span></h3><p>Write a complete program using <code>"00110111"</code> and <code>"00001101"</code>. Output labelled 8-bit <strong>sum</strong> and <strong>difference</strong>.</p><span class="exam-ref">H446 coding extension — applies the conversion and arithmetic methods above</span><div class="answer"><div class="answer-context">Write a complete program that outputs labelled 8-bit sum and difference. [6 marks]</div><pre class="code-lite">using System;
+int difference = ______________________;
+string result = ________________________;
+Console.WriteLine(result);</pre><span class="exam-ref">OCR H446/01 June 2022 Q3(a), adapted</span><div class="answer"><div class="answer-context">Output 01101101 − 00110100 as 8-bit binary. [4 marks]</div><pre class="code-lite">int difference = BinaryToDenary(minuend) - BinaryToDenary(subtrahend);
+string result = DenaryToBinary8(difference);</pre><p class="output">Output: 00111001</p></div></article>
+    <article class="card question"><h3>Build both operations <span class="marks">[6]</span></h3><p>Write a complete program using <code>"00110111"</code> and <code>"00001101"</code>. Output labelled 8-bit <strong>sum</strong> and <strong>difference</strong>. Do not use conversion or formatting shortcuts.</p><span class="exam-ref">H446 coding extension — applies the conversion and arithmetic methods above</span><div class="answer"><div class="answer-context">Write a complete program that outputs labelled 8-bit sum and difference. [6 marks]</div><pre class="code-lite">using System;
 
 public class Program
 {
+    public static int BinaryToDenary(string binaryText)
+    {
+        int denary = 0;
+        for (int position = 0; position &lt; binaryText.Length; position++)
+        {
+            int bit = int.Parse(binaryText.Substring(position, 1));
+            denary = denary * 2 + bit;
+        }
+        return denary;
+    }
+
+    public static string DenaryToBinary8(int denary)
+    {
+        string binary = "";
+        for (int position = 0; position &lt; 8; position++)
+        {
+            if (denary % 2 == 0)
+            {
+                binary = "0" + binary;
+            }
+            else
+            {
+                binary = "1" + binary;
+            }
+            denary = denary / 2;
+        }
+        return binary;
+    }
+
     public static void Main()
     {
         string first = "00110111";
         string second = "00001101";
-        int firstValue = Convert.ToInt32(first, 2);
-        int secondValue = Convert.ToInt32(second, 2);
-
-        int sum = firstValue + secondValue;
-        int difference = firstValue - secondValue;
-
-        Console.WriteLine("Sum: " + Convert.ToString(sum, 2).PadLeft(8, '0'));
-        Console.WriteLine("Difference: " + Convert.ToString(difference, 2).PadLeft(8, '0'));
+        int firstValue = BinaryToDenary(first);
+        int secondValue = BinaryToDenary(second);
+        Console.WriteLine("Sum: " + DenaryToBinary8(firstValue + secondValue));
+        Console.WriteLine("Difference: " + DenaryToBinary8(firstValue - secondValue));
     }
 }</pre><p class="output">Sum: 01000100
 Difference: 00101010</p></div></article>
@@ -177,28 +227,28 @@ Difference: 00101010</p></div></article>
   <dl class="vocab">
     <div><dt>String</dt><dd>A sequence of characters stored as text, for example <code>"10101111"</code>.</dd></div>
     <div><dt>Integer</dt><dd>A whole-number data type used for arithmetic in C#.</dd></div>
-    <div><dt>Convert.ToInt32</dt><dd>A method that converts suitable text into an integer; an optional second argument gives the input base.</dd></div>
-    <div><dt>Base / radix</dt><dd>The number of symbols used by a number system: binary is base 2 and hexadecimal is base 16.</dd></div>
-    <div><dt>Format string</dt><dd>A code such as <code>"X2"</code> that controls how an integer is written as text.</dd></div>
-    <div><dt>Padding</dt><dd>Adding leading characters so output has a chosen width, for example 8 bits.</dd></div>
+    <div><dt>int.Parse</dt><dd>The C# counterpart of OCR <code>int(text)</code>: it changes suitable text into an integer.</dd></div>
+    <div><dt>Length</dt><dd>The C# string property that gives the number of characters; OCR reference pseudocode writes <code>.length</code>.</dd></div>
+    <div><dt>Substring</dt><dd>The C# method that returns part of a string; OCR reference pseudocode writes <code>.subString(start, numberOfCharacters)</code>.</dd></div>
+    <div><dt>Remainder</dt><dd>What is left after division, found in C# using <code>%</code>; the OCR equivalent is <code>MOD</code>.</dd></div>
+    <div><dt>Quotient</dt><dd>The whole-number result of division, found with integer <code>/</code>; the OCR equivalent is <code>DIV</code>.</dd></div>
     <div><dt>Overflow</dt><dd>When a calculation produces a value outside the range that can be stored in the available bits.</dd></div>
     <div><dt>Nibble</dt><dd>A group of exactly four binary bits, represented by one hexadecimal digit.</dd></div>
-    <div><dt>Operand</dt><dd>A value used by an operator, for example the two values added by <code>+</code>.</dd></div>
   </dl>
 </section>
 
 <section id="exit-ticket" class="page" data-phase="Exit Ticket" data-behaviour="Reflection" data-response="Show Your Hand">
   <div class="page-head"><div class="eyebrow">Lesson reflection</div><h1>How did today’s lesson go?</h1><p class="lead">Choose the hand that best matches how confident you feel now.</p></div>
   <div class="exit-options" role="group" aria-label="Lesson confidence">
-    <button class="exit-choice" type="button" aria-pressed="false" data-choice="Confident — ready to use C# for number conversion"><span class="exit-icon" aria-hidden="true">👍</span><strong>Confident</strong><span>I can convert strings between bases and format binary arithmetic outputs.</span></button>
-    <button class="exit-choice" type="button" aria-pressed="false" data-choice="Nearly there — I need another code trace"><span class="exit-icon" aria-hidden="true">🫳</span><strong>Nearly there</strong><span>I know the method but need more practice choosing the base or format string.</span></button>
-    <button class="exit-choice" type="button" aria-pressed="false" data-choice="Need support — I am unsure when a value is text or an integer"><span class="exit-icon" aria-hidden="true">👎</span><strong>Need support</strong><span>I am still unsure how strings become numbers in the program.</span></button>
+    <button class="exit-choice" type="button" aria-pressed="false" data-choice="Confident — ready to use C# number algorithms"><span class="exit-icon" aria-hidden="true">👍</span><strong>Confident</strong><span>I can trace a manual conversion loop and check binary arithmetic.</span></button>
+    <button class="exit-choice" type="button" aria-pressed="false" data-choice="Nearly there — I need another code trace"><span class="exit-icon" aria-hidden="true">🫳</span><strong>Nearly there</strong><span>I know the method but need more practice with remainders and string positions.</span></button>
+    <button class="exit-choice" type="button" aria-pressed="false" data-choice="Need support — I am unsure when a value is text or an integer"><span class="exit-icon" aria-hidden="true">👎</span><strong>Need support</strong><span>I am still unsure how a string character becomes a number in the program.</span></button>
   </div>
   <p id="exitStatus" class="exit-status" aria-live="polite"></p>
   <article class="card next"><h2>Get ready for next lesson</h2><p>Write one number in denary, binary and hexadecimal. Underline the part of today’s program that changes its representation.</p></article>
 </section>
 </main>
-<footer class="lesson-footer"><strong>H446Lesson008 · OCR H446 · 1.4.1(e–f)</strong><span>C# number conversions and binary arithmetic</span></footer>
+<footer class="lesson-footer"><strong>H446Lesson008 · OCR H446 · 1.4.1(e–f)</strong><span>C# number-conversion algorithms and binary arithmetic</span></footer>
 <script>
 const order=['do-now','objectives','new-learning','i-do','we-do','you-do','vocabulary','exit-ticket'];
 const pages=[...document.querySelectorAll('.page')],tabs=[...document.querySelectorAll('.nav button')],reveal=document.getElementById('reveal');
