@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="OCR H446 Year 12 C# lesson on number conversions and binary arithmetic.">
+<title>H446 Lesson 008 | C# Number Conversions</title>
+<style>
+:root{--g:#176b4a;--gd:#0f4e36;--ink:#16251f;--muted:#52645c;--line:#d9e2dd;--paper:#fff;--wash:#f4f7f5;--blue:#c9e9f5;--orange:#fae2d5;--rail:176px;--shadow:0 8px 24px rgba(18,45,33,.09)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--wash);color:var(--ink);font-family:Inter,Aptos,"Segoe UI",Arial,sans-serif;font-size:clamp(17px,1.35vw,23px);line-height:1.42}button{font:inherit;cursor:pointer}:focus-visible{outline:4px solid #f2bf3b;outline-offset:3px}code,pre{font-family:Consolas,"SFMono-Regular",monospace}
+.navwrap{position:fixed;inset:0 auto 0 0;z-index:30;width:var(--rail);display:flex;flex-direction:column;overflow-y:auto;background:rgba(255,255,255,.98);border-right:1px solid var(--line);box-shadow:4px 0 14px rgba(10,40,26,.06)}.nav{display:flex;flex-direction:column;gap:.18rem;padding:.65rem .55rem}.nav button{border:0;border-left:5px solid transparent;border-radius:.35rem;background:transparent;color:#385048;padding:.55rem;font-size:.7em;font-weight:800;text-align:left}.nav button.active{color:var(--gd);border-left-color:var(--g);background:#edf7f2}.nav-tools{margin-top:auto;padding:.65rem .55rem;border-top:1px solid var(--line)}.control-btn{width:100%;border:2px solid var(--g);border-radius:.55rem;background:var(--g);color:#fff;padding:.55rem .35rem;font-size:.68em;font-weight:850}
+.signal-wrap{position:sticky;top:0;z-index:20;margin-left:var(--rail);padding:.65rem clamp(1rem,3vw,3rem);background:rgba(244,247,245,.96);border-bottom:1px solid var(--line)}.signal-bar{max-width:1500px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:1rem}.signals{display:flex;flex-wrap:wrap;gap:.55rem}.signal{min-width:150px;min-height:54px;display:inline-flex;align-items:center;justify-content:center;padding:.38rem .9rem;border:2px solid;border-radius:.55rem;box-shadow:0 4px 8px rgba(0,0,0,.16);font-size:.91em;font-weight:850;line-height:1.08;text-align:center}.phase{color:#153f69;border-color:#24699d;background:var(--blue)}.behaviour{color:#275c1d;border-color:#23652f;background:#d9f2cd}.response{color:#87350c;border-color:#9b430f;background:var(--orange)}.lesson-date{color:var(--muted);font-size:.78em;font-weight:800;white-space:nowrap}
+main{margin-left:var(--rail);padding:1.15rem clamp(1rem,3vw,3rem) 4.5rem}.page{display:none;animation:appear .2s ease-out}.page.active{display:block}@keyframes appear{from{opacity:.4;transform:translateY(5px)}}h1{margin:0;font-size:clamp(2rem,4.4vw,4.35rem);line-height:1.02;letter-spacing:-.045em}h2{margin:0 0 .55rem;font-size:clamp(1.42rem,2.4vw,2.25rem);line-height:1.12}h3{margin:0 0 .35rem;font-size:1.06em}p{margin:.25rem 0 .65rem}.page-head{margin:0 0 .82rem}.lead{max-width:72ch;margin:.25rem 0 0;color:var(--muted);font-size:1em}.eyebrow{color:var(--g);font-size:.72em;font-weight:900;letter-spacing:.12em;text-transform:uppercase}.exam-ref{display:block;margin-top:.23rem;color:var(--muted);font-size:.7em;font-weight:800}.marks{float:right;color:var(--muted);font-size:.75em;font-weight:780}
+.grid{display:grid;gap:.85rem}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.card{background:var(--paper);border:1px solid var(--line);border-radius:.8rem;padding:.9rem 1rem;box-shadow:var(--shadow)}.card.accent{border-left:8px solid var(--g)}.card h2,.card h3{color:var(--gd)}.question-list{counter-reset:q}.question{counter-increment:q}.question h3:before{content:counter(q) ". ";color:var(--g)}.do-now-grid{gap:.75rem}.do-now-grid .card{min-height:clamp(152px,19vh,190px);padding:.75rem .88rem}.challenge{float:right;border:2px solid #9b430f;border-radius:999px;background:var(--orange);color:#87350c;padding:.14rem .48rem;font-size:.57em;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
+.answer{display:none;color:#173f2d}.answer-context{margin:0 0 .55rem;padding:.45rem .6rem;border:1px solid #8a9891;border-left:5px solid #294b63;border-radius:.35rem;background:#f9fbfa;color:#1f3028;font-size:.82em;font-weight:800;line-height:1.32}body.show-answers .question,.swap-card.show-answer{border:2px solid #8eb4a1;border-left:8px solid var(--g);background:#edf8f2;box-shadow:0 4px 12px rgba(18,75,49,.09)}body.show-answers .question>:not(.answer){display:none}body.show-answers .question>.answer,.swap-card.show-answer .answer{display:block}.swap-card.show-answer .task{display:none}
+.learning-item{padding:.56rem 0}.learning-item+.learning-item{border-top:1px solid var(--line)}.learning-item strong{display:block;color:var(--gd);margin-bottom:.12rem}.learning-item span{color:var(--muted);font-size:.86em}.syntax{display:block;margin-top:.2rem;color:#0f4e36;font-family:Consolas,monospace;font-size:.81em;font-weight:800}
+.code{margin:.48rem 0;overflow:auto;border:1px solid #0e3828;border-radius:.56rem;background:#16251f;color:#f1f8f4;padding:.68rem .76rem;font-size:clamp(.61rem,.9vw,.82rem);line-height:1.4;white-space:pre}.code-lite{margin:.45rem 0;overflow:auto;border-left:5px solid var(--g);background:#f2f7f4;color:#173f2d;padding:.52rem .62rem;font-family:Consolas,monospace;font-size:clamp(.6rem,.86vw,.77rem);line-height:1.38;white-space:pre}.output{margin:.42rem 0 0;border-left:5px solid #294b63;background:#f6f9fa;padding:.48rem .62rem;font-family:Consolas,monospace;font-size:.79em;font-weight:800}
+.sticky{display:grid;grid-template-columns:minmax(0,2.15fr) minmax(270px,.85fr);gap:.85rem;align-items:start}.reference{position:sticky;top:180px;background:#fff;border:2px solid #b8d4c6;border-radius:.75rem;padding:.82rem;box-shadow:var(--shadow)}.reference h3{color:var(--gd)}.reference p,.reference li{font-size:.83em}.reference ul{margin:.3rem 0 .6rem;padding-left:1.15em}
+.i-do{cursor:pointer}.steps{counter-reset:step;display:grid;gap:.4rem}.step{display:none;grid-template-columns:2.5rem 1fr;gap:.55rem;counter-increment:step}.step.visible{display:grid;animation:step-in .18s ease-out}.step:before{content:counter(step);width:2.05rem;height:2.05rem;display:grid;place-items:center;background:var(--g);color:#fff;border-radius:50%;font-weight:900}.step h3{margin:.02rem 0 .08rem}.step p{margin:0;font-size:.88em}@keyframes step-in{from{opacity:0;transform:translateY(.22rem)}}.model{display:none}.thinking .page-head,.thinking .reference{display:none}.thinking .sticky{display:block}.thinking .task{display:none}.thinking .model{display:block}.thinking .i-card{width:100%;border:2px solid #8eb4a1;border-left:8px solid var(--g);background:#edf8f2}.model-title{margin:0 0 .6rem;color:var(--gd);font-size:1.1em;font-weight:900}
+.you-title{white-space:nowrap;font-size:clamp(1.5rem,2.55vw,2.55rem);letter-spacing:-.03em}.title-kicker{color:var(--g);font-size:.52em;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.you-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem}.you-grid .card{min-height:clamp(204px,24vh,252px);padding:.74rem .8rem}.you-grid .card h3{font-size:.95em}.you-grid .card p{font-size:.82em;line-height:1.31}.you-grid .code{margin:.35rem 0;padding:.46rem .53rem;font-size:clamp(.52rem,.68vw,.67rem);line-height:1.31}.you-grid .answer{font-size:.76em;line-height:1.32}
+.vocab-head{display:flex;align-items:baseline;gap:.6rem;margin-bottom:.6rem;white-space:nowrap}.vocab-head h1{font-size:clamp(1.5rem,2.5vw,2.5rem)}.vocab-head .lead{margin:0;max-width:none;font-size:.7em}.vocab{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.62rem}.vcard{min-height:4.25rem;background:#fff;border:1px solid var(--line);border-radius:.6rem;padding:.68rem}.vcard dt{color:var(--gd);font-weight:900}.vcard dd{margin:.18rem 0 0;color:var(--muted);font-size:.83em}.vcard:not(.revealed).hide-term dt,.vcard:not(.revealed).hide-def dd{color:transparent;user-select:none}.vcard:not(.revealed).hide-term dt:after,.vcard:not(.revealed).hide-def dd:after{color:#73857c;content:"________________";font-weight:700;letter-spacing:.08em}
+.exit-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.78rem}.exit-choice{min-height:206px;display:grid;align-content:center;justify-items:center;gap:.22rem;border:2px solid #aebdb6;border-radius:.8rem;background:#fff;color:var(--ink);padding:.9rem;text-align:center;box-shadow:var(--shadow)}.exit-choice[aria-pressed="true"]{border:4px solid var(--g);background:#eaf6f0;box-shadow:0 0 0 4px #fff,0 0 0 8px #176b4a}.exit-icon{font-size:clamp(3.8rem,7vw,6.5rem);line-height:1}.exit-choice strong{color:var(--gd);font-size:1.12em}.exit-choice span:last-child{color:var(--muted);font-size:.77em;line-height:1.28}.exit-status{min-height:1.4em;margin:.62rem 0 0;color:var(--gd);font-size:.78em;font-weight:850;text-align:center}.next{display:flex;align-items:center;gap:.8rem;margin-top:.7rem;border-left:8px solid var(--g);padding:.7rem .9rem}.next h2{flex:0 0 auto;margin:0;font-size:1.1em}.next p{margin:0;font-size:.86em}
+.lesson-footer{position:fixed;right:0;bottom:0;left:var(--rail);z-index:12;display:flex;justify-content:flex-end;gap:.45rem;padding:.28rem clamp(1rem,3vw,3rem);border-top:1px solid var(--line);background:rgba(255,255,255,.96);color:var(--muted);font-size:.6em}.lesson-footer strong{color:var(--gd)}
+@media(max-width:900px){.navwrap{position:static;width:auto;flex-direction:row;align-items:center;overflow-x:auto;border-right:0;box-shadow:none}.nav{min-width:max-content;flex-direction:row;padding:0 1rem .6rem}.nav button{border-left:0;border-bottom:4px solid transparent;padding:.45rem .72rem;text-align:center}.nav button.active{border-bottom-color:var(--g)}.nav-tools{margin:0;padding:0 .65rem .5rem 0;border:0}.nav-tools .control-btn{width:auto;white-space:nowrap}.signal-wrap,main{margin-left:0}.lesson-footer{left:0}.two,.three,.vocab,.sticky,.you-grid,.exit-options{grid-template-columns:1fr}.reference{position:static}.you-title,.vocab-head{white-space:normal}.vocab-head{align-items:flex-start;flex-direction:column}.exit-choice{min-height:150px}.signal{min-width:120px;min-height:46px}}
+</style>
+</head>
+<body>
+<div class="navwrap">
+  <nav class="nav" aria-label="Lesson phases">
+    <button class="active" data-page="do-now" aria-current="page">Do Now</button>
+    <button data-page="objectives">Objectives</button>
+    <button data-page="new-learning">New Learning</button>
+    <button data-page="i-do">I Do</button>
+    <button data-page="we-do">We Do</button>
+    <button data-page="you-do">You Do</button>
+    <button data-page="vocabulary">Key Vocabulary</button>
+    <button data-page="exit-ticket">Exit Ticket</button>
+  </nav>
+  <div class="nav-tools"><button id="reveal" class="control-btn" type="button">Reveal answers</button></div>
+</div>
+<div class="signal-wrap" aria-live="polite"><div class="signal-bar"><div class="signals"><div id="phaseSignal" class="signal phase">Do Now</div><div id="behaviourSignal" class="signal behaviour">Silent Working</div><div id="responseSignal" class="signal response">MWB</div></div><time id="lessonDate" class="lesson-date"></time></div></div>
+<main>
+<section id="do-now" class="page active" data-phase="Do Now" data-behaviour="Silent Working" data-response="MWB">
+  <div class="grid two question-list do-now-grid">
+    <article class="card question"><h3>Binary retrieval</h3><p>Convert denary <strong>156</strong> into an 8-bit binary number.</p><div class="answer"><div class="answer-context">Denary 156 to 8-bit binary</div><strong>10011100</strong></div></article>
+    <article class="card question"><h3>Hexadecimal retrieval</h3><p>Convert <strong>1010 1111</strong> into hexadecimal.</p><div class="answer"><div class="answer-context">Binary 1010 1111 to hexadecimal</div><strong>AF</strong> — <code>1010 = A</code>; <code>1111 = F</code>.</div></article>
+    <article class="card question"><h3>Data types</h3><p>What does the data type <strong>string</strong> store? Give one valid C# string.</p><div class="answer"><div class="answer-context">Recall the data type string</div>A <strong>string</strong> stores text/characters, for example <code>"10101111"</code> or <code>"BD"</code>.</div></article>
+    <article class="card question"><h3>Binary addition <span class="challenge">High Challenge</span></h3><p>Add <strong>11010110 + 00110111</strong>. Give the stored 8-bit result and state whether overflow occurs.</p><div class="answer"><div class="answer-context">8-bit unsigned addition: 11010110 + 00110111</div><code>1 00001101</code>; stored result <strong><code>00001101</code></strong>. <strong>Overflow occurs</strong>: 269 is above the 8-bit unsigned maximum of 255.</div></article>
+  </div>
+</section>
+
+<section id="objectives" class="page" data-phase="Objectives" data-behaviour="Listening" data-response="">
+  <div class="grid three">
+    <article class="card accent"><h2>Read text</h2><p>Store number characters in a C# <code>string</code> and explain why quotation marks matter.</p></article>
+    <article class="card accent"><h2>Convert bases</h2><p>Use C# to move between denary, binary and hexadecimal accurately.</p></article>
+    <article class="card accent"><h2>Check arithmetic</h2><p>Write code that adds and subtracts binary values, then formats the result as 8-bit binary.</p></article>
+  </div>
+  <article class="card" style="margin-top:.9rem"><h2>Success looks like…</h2><p>I can choose the correct base in a conversion method, explain the difference between text and an integer, and use a program to check an H446 number-representation answer.</p></article>
+</section>
+
+<section id="new-learning" class="page" data-phase="New Learning" data-behaviour="Listening" data-response="Cold Calling">
+  <div class="grid two">
+    <article class="card accent"><h2>1. Numbers typed or read in are text</h2><div class="learning-item"><strong>Quotation marks make a string</strong><span><code>"189"</code> and <code>"10101111"</code> are characters, not values C# can calculate with yet.</span><span class="syntax">string binaryText = "10101111";</span></div><div class="learning-item"><strong>Hexadecimal is also text</strong><span>A result such as <code>"BD"</code> contains a letter, so it must be a string.</span></div></article>
+    <article class="card accent"><h2>2. Convert text into an integer</h2><div class="learning-item"><strong>Tell C# which base to read</strong><span>Use base <code>2</code> for binary and base <code>16</code> for hexadecimal.</span><span class="syntax">int value = Convert.ToInt32(binaryText, 2);</span></div><div class="learning-item"><strong>Denary is the default</strong><span>For denary text use <code>Convert.ToInt32(denaryText)</code>.</span></div></article>
+    <article class="card accent"><h2>3. Format an integer for output</h2><div class="learning-item"><strong>Hexadecimal output</strong><span><code>"X"</code> formats upper-case hexadecimal. <code>"X2"</code> keeps two digits, so five becomes <code>05</code>.</span><span class="syntax">string hex = value.ToString("X2");</span></div><div class="learning-item"><strong>Binary output</strong><span>Use base <code>2</code>, then add leading zeroes for an 8-bit result.</span><span class="syntax">Convert.ToString(value, 2).PadLeft(8, '0')</span></div></article>
+    <article class="card accent"><h2>4. Arithmetic happens after conversion</h2><div class="learning-item"><strong>Work with integers</strong><span>Convert both binary strings to integers, use <code>+</code> or <code>-</code>, then format the result back to binary.</span></div><div class="learning-item"><strong>Keep the range visible</strong><span>An unsigned 8-bit result above 255 is overflow. Do not hide it by cutting off a bit.</span></div></article>
+  </div>
+</section>
+
+<section id="i-do" class="page i-do" data-phase="I Do" data-behaviour="Listening" data-response="MWB">
+  <div class="page-head"><div class="eyebrow">Turn knowledge into marks</div><p class="lead"><strong>Question:</strong> Use C# to solve the denary-to-hexadecimal conversion of <strong>189</strong>. The program must begin with <code>"189"</code> as text and output two-digit upper-case hexadecimal. <span class="marks">[3 marks]</span><span class="exam-ref">OCR H446/01 June 2023 Q3(a), adapted to C#</span></p></div>
+  <div class="sticky">
+    <div class="card i-card">
+      <div class="task"><div class="steps">
+        <div class="step"><div><h3>Store the entered characters</h3><p><code>"189"</code> is a <strong>string</strong>. It is text, so C# cannot calculate with it yet.</p></div></div>
+        <div class="step"><div><h3>Convert the denary text</h3><p><code>Convert.ToInt32(denaryText)</code> turns the characters into integer value <strong>189</strong>.</p></div></div>
+        <div class="step"><div><h3>Format it as hexadecimal</h3><p><code>ToString("X2")</code> makes an upper-case hexadecimal string. The <code>2</code> keeps the output at two digits.</p></div></div>
+        <div class="step"><div><h3>Check the representation</h3><p>The output is <strong><code>BD</code></strong>: <code>B = 11</code>, <code>D = 13</code>, so <code>11 × 16 + 13 = 189</code>.</p></div></div>
+      </div></div>
+      <div class="model"><div class="answer-context">Convert denary 189 to two-digit upper-case hexadecimal, beginning with the text "189". [3 marks]</div><p class="model-title">Full .NET Fiddle Console model</p><pre class="code">using System;
+
+public class Program
+{
+    public static void Main()
+    {
+        string denaryText = "189";
+        int denary = Convert.ToInt32(denaryText);
+        string hexadecimal = denary.ToString("X2");
+
+        Console.WriteLine(hexadecimal);
+    }
+}</pre><p class="output">Output: BD</p><p><strong>Why it works:</strong> it changes representations, not the value: <code>"189"</code> → <code>189</code> → <code>"BD"</code>.</p></div>
+    </div>
+    <aside class="reference"><h3>Conversion pattern</h3><p><strong>text → integer → formatted text</strong></p><p><code>Convert.ToInt32(text, 2)</code><br>reads binary.</p><p><code>Convert.ToInt32(text, 16)</code><br>reads hexadecimal.</p><p><code>value.ToString("X2")</code><br>outputs two-digit hexadecimal.</p><p><code>Convert.ToString(value, 2)</code><br>outputs binary.</p></aside>
+  </div>
+</section>
+
+<section id="we-do" class="page" data-phase="We Do" data-behaviour="Quiet Working" data-response="MWB">
+  <div class="page-head"><div class="eyebrow">Improve the answer together</div><p class="lead"><strong>Question:</strong> Binary <code>"1010101111"</code> should produce hexadecimal <code>2AF</code> and denary <code>687</code>. The program runs, but its two conversion lines are wrong. Refine them. <span class="marks">[4 marks]</span><span class="exam-ref">OCR H446/01 June 2023 Q3(a), adapted to C#</span></p></div>
+  <div class="sticky">
+    <article class="card swap-card">
+      <div class="task"><h2>The code runs — but not correctly</h2><pre class="code">using System;
+
+public class Program
+{
+    public static void Main()
+    {
+        string binaryText = "1010101111";
+        int denary = Convert.ToInt32(binaryText);   // wrong
+        string hexadecimal = denary.ToString("D2"); // wrong
+
+        Console.WriteLine(hexadecimal);
+        Console.WriteLine(denary);
+    }
+}</pre><p>What base must C# use to read <code>binaryText</code>? Which format string outputs hexadecimal?</p></div>
+      <div class="answer"><div class="answer-context">Binary 1010101111 to hexadecimal and denary. Correct the two conversion lines. [4 marks]</div><h2>Improved program lines</h2><pre class="code-lite">int denary = Convert.ToInt32(binaryText, 2);
+string hexadecimal = denary.ToString("X");</pre><p><strong>Why:</strong> <code>2</code> tells C# to read the string as binary. <code>"X"</code> tells C# to format the integer as upper-case hexadecimal.</p><p class="output">Output: 2AF
+687</p></div>
+    </article>
+    <aside class="reference"><h3>Do not confuse the two 2s</h3><p><code>Convert.ToInt32(text, 2)</code><br>The <code>2</code> is the <strong>input base</strong>.</p><p><code>ToString("X2")</code><br>The <code>2</code> is the <strong>minimum output width</strong>.</p><h3 style="margin-top:.75rem">Quick check</h3><p>Group <code>1010101111</code> as <code>10 1010 1111</code> → <code>2AF</code>.</p></aside>
+  </div>
+</section>
+
+<section id="you-do" class="page" data-phase="You Do" data-behaviour="Silent Working" data-response="Books / .NET Fiddle">
+  <div class="page-head"><h1 class="you-title"><span class="title-kicker">Independent exam practice · 25 marks</span> — Show what you can do</h1><p class="lead">Use C# Console in .NET Fiddle. Every starter below compiles; change only the marked values or lines. Green reveals contain runnable model code.</p></div>
+  <div class="grid question-list you-grid">
+    <article class="card question"><h3>Trace the conversion <span class="marks">[3]</span></h3><p>State the output and explain why <code>hexadecimal</code> is a string.</p><pre class="code">string denaryText = "189";
+int denary = Convert.ToInt32(denaryText);
+string hexadecimal = denary.ToString("X2");
+Console.WriteLine(hexadecimal);</pre><span class="exam-ref">OCR H446/01 June 2023 Q3(a), adapted</span><div class="answer"><div class="answer-context">State the output and explain why hexadecimal is a string. [3 marks]</div><p><strong>Output:</strong> <code>BD</code>.</p><p><code>hexadecimal</code> is a string because formatting creates text and the value can include letters.</p></div></article>
+    <article class="card question"><h3>Complete denary to hex <span class="marks">[4]</span></h3><p>The program must output <code>12A</code> for denary text <code>"298"</code>. Replace the two marked values.</p><pre class="code">string denaryText = "298";
+int value = 0;           // replace
+string hexadecimal = ""; // replace
+Console.WriteLine(hexadecimal);</pre><span class="exam-ref">OCR H446/01 June 2024 Q4(b), adapted</span><div class="answer"><div class="answer-context">Output 12A for denary text 298. Replace the two marked values. [4 marks]</div><pre class="code-lite">int value = Convert.ToInt32(denaryText);
+string hexadecimal = value.ToString("X");</pre><p class="output">Output: 12A</p></div></article>
+    <article class="card question"><h3>Correct binary to hex <span class="marks">[4]</span></h3><p>Correct the one wrong line so the program outputs <code>2AF</code> and <code>687</code>.</p><pre class="code">string binaryText = "1010101111";
+int denary = Convert.ToInt32(binaryText); // wrong
+string hexadecimal = denary.ToString("X");
+Console.WriteLine(hexadecimal);
+Console.WriteLine(denary);</pre><span class="exam-ref">OCR H446/01 June 2023 Q3(a), adapted</span><div class="answer"><div class="answer-context">Correct the line that converts binary 1010101111. [4 marks]</div><pre class="code-lite">int denary = Convert.ToInt32(binaryText, 2);</pre><p>Base <code>2</code> reads the string as binary; the final lines output <code>2AF</code> and <code>687</code>.</p></div></article>
+    <article class="card question"><h3>Code binary addition <span class="marks">[4]</span></h3><p>Replace the two marked values to output the 8-bit sum of <code>00110111 + 10011001</code>.</p><pre class="code">string first = "00110111";
+string second = "10011001";
+int total = 0;        // replace
+string result = "";   // replace
+Console.WriteLine(result);</pre><span class="exam-ref">OCR H446/01 June 2024 Q4(e), adapted</span><div class="answer"><div class="answer-context">Output the 8-bit sum of 00110111 and 10011001. [4 marks]</div><pre class="code-lite">int total = Convert.ToInt32(first, 2) + Convert.ToInt32(second, 2);
+string result = Convert.ToString(total, 2).PadLeft(8, '0');</pre><p class="output">Output: 11010000</p></div></article>
+    <article class="card question"><h3>Code binary subtraction <span class="marks">[4]</span></h3><p>Replace the two marked values to output <code>01101101 − 00110100</code> as 8-bit binary.</p><pre class="code">string minuend = "01101101";
+string subtrahend = "00110100";
+int difference = 0;   // replace
+string result = "";   // replace
+Console.WriteLine(result);</pre><span class="exam-ref">OCR H446/01 June 2022 Q3(a), adapted</span><div class="answer"><div class="answer-context">Output 01101101 − 00110100 as 8-bit binary. [4 marks]</div><pre class="code-lite">int difference = Convert.ToInt32(minuend, 2) - Convert.ToInt32(subtrahend, 2);
+string result = Convert.ToString(difference, 2).PadLeft(8, '0');</pre><p class="output">Output: 00111001</p></div></article>
+    <article class="card question"><h3>Build both operations <span class="marks">[6]</span></h3><p>Write a complete program using <code>"00110111"</code> and <code>"00001101"</code>. Output labelled 8-bit <strong>sum</strong> and <strong>difference</strong>.</p><span class="exam-ref">H446 coding extension — applies the conversion and arithmetic methods above</span><div class="answer"><div class="answer-context">Write a complete program that outputs labelled 8-bit sum and difference. [6 marks]</div><pre class="code-lite">using System;
+
+public class Program
+{
+    public static void Main()
+    {
+        string first = "00110111";
+        string second = "00001101";
+        int firstValue = Convert.ToInt32(first, 2);
+        int secondValue = Convert.ToInt32(second, 2);
+
+        int sum = firstValue + secondValue;
+        int difference = firstValue - secondValue;
+
+        Console.WriteLine("Sum: " + Convert.ToString(sum, 2).PadLeft(8, '0'));
+        Console.WriteLine("Difference: " + Convert.ToString(difference, 2).PadLeft(8, '0'));
+    }
+}</pre><p class="output">Sum: 01000100
+Difference: 00101010</p></div></article>
+  </div>
+</section>
+
+<section id="vocabulary" class="page" data-phase="Key Vocabulary" data-behaviour="Listening" data-response="Choral Response">
+  <div class="vocab-head"><div class="eyebrow">Precision matters</div><h1>Say it like a computer scientist</h1><p class="lead">Say the missing term or definition before each click. One answer appears at a time.</p></div>
+  <dl class="vocab">
+    <div><dt>String</dt><dd>A sequence of characters stored as text, for example <code>"10101111"</code>.</dd></div>
+    <div><dt>Integer</dt><dd>A whole-number data type used for arithmetic in C#.</dd></div>
+    <div><dt>Convert.ToInt32</dt><dd>A method that converts suitable text into an integer; an optional second argument gives the input base.</dd></div>
+    <div><dt>Base / radix</dt><dd>The number of symbols used by a number system: binary is base 2 and hexadecimal is base 16.</dd></div>
+    <div><dt>Format string</dt><dd>A code such as <code>"X2"</code> that controls how an integer is written as text.</dd></div>
+    <div><dt>Padding</dt><dd>Adding leading characters so output has a chosen width, for example 8 bits.</dd></div>
+    <div><dt>Overflow</dt><dd>When a calculation produces a value outside the range that can be stored in the available bits.</dd></div>
+    <div><dt>Nibble</dt><dd>A group of exactly four binary bits, represented by one hexadecimal digit.</dd></div>
+    <div><dt>Operand</dt><dd>A value used by an operator, for example the two values added by <code>+</code>.</dd></div>
+  </dl>
+</section>
+
+<section id="exit-ticket" class="page" data-phase="Exit Ticket" data-behaviour="Reflection" data-response="Show Your Hand">
+  <div class="page-head"><div class="eyebrow">Lesson reflection</div><h1>How did today’s lesson go?</h1><p class="lead">Choose the hand that best matches how confident you feel now.</p></div>
+  <div class="exit-options" role="group" aria-label="Lesson confidence">
+    <button class="exit-choice" type="button" aria-pressed="false" data-choice="Confident — ready to use C# for number conversion"><span class="exit-icon" aria-hidden="true">👍</span><strong>Confident</strong><span>I can convert strings between bases and format binary arithmetic outputs.</span></button>
+    <button class="exit-choice" type="button" aria-pressed="false" data-choice="Nearly there — I need another code trace"><span class="exit-icon" aria-hidden="true">🫳</span><strong>Nearly there</strong><span>I know the method but need more practice choosing the base or format string.</span></button>
+    <button class="exit-choice" type="button" aria-pressed="false" data-choice="Need support — I am unsure when a value is text or an integer"><span class="exit-icon" aria-hidden="true">👎</span><strong>Need support</strong><span>I am still unsure how strings become numbers in the program.</span></button>
+  </div>
+  <p id="exitStatus" class="exit-status" aria-live="polite"></p>
+  <article class="card next"><h2>Get ready for next lesson</h2><p>Write one number in denary, binary and hexadecimal. Underline the part of today’s program that changes its representation.</p></article>
+</section>
+</main>
+<footer class="lesson-footer"><strong>H446Lesson008 · OCR H446 · 1.4.1(e–f)</strong><span>C# number conversions and binary arithmetic</span></footer>
+<script>
+const order=['do-now','objectives','new-learning','i-do','we-do','you-do','vocabulary','exit-ticket'];
+const pages=[...document.querySelectorAll('.page')],tabs=[...document.querySelectorAll('.nav button')],reveal=document.getElementById('reveal');
+const iDo=document.getElementById('i-do'),steps=[...iDo.querySelectorAll('.step')],vocab=[...document.querySelectorAll('.vocab>div')],answerPages=new Set(['do-now','we-do','you-do']);
+const date=new Date(),dateBox=document.getElementById('lessonDate');dateBox.dateTime=date.toISOString().slice(0,10);dateBox.textContent=new Intl.DateTimeFormat('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'}).format(date);
+vocab.forEach((card,index)=>card.classList.add('vcard',index%2===0?'hide-def':'hide-term'));
+function active(){return document.querySelector('.page.active')}
+function reset(){document.body.classList.remove('show-answers');document.querySelectorAll('.swap-card.show-answer').forEach(c=>c.classList.remove('show-answer'));iDo.classList.remove('thinking');steps.forEach(s=>s.classList.remove('visible'));vocab.forEach(c=>c.classList.remove('revealed'))}
+function updateLabel(){const page=active();if(!page)return;if(page.id==='vocabulary'){reveal.textContent=vocab.some(c=>!c.classList.contains('revealed'))?'Reveal next answer':'Continue';return}if(page.id==='i-do'){reveal.textContent=steps.some(s=>!s.classList.contains('visible'))?'Next step':(iDo.classList.contains('thinking')?'Continue':'Show model answer');return}reveal.textContent=answerPages.has(page.id)&&!document.body.classList.contains('show-answers')?'Reveal answers':'Continue'}
+function show(id){const page=document.getElementById(id)||document.getElementById('do-now');reset();pages.forEach(p=>p.classList.toggle('active',p===page));tabs.forEach(t=>{const on=t.dataset.page===page.id;t.classList.toggle('active',on);t.setAttribute('aria-current',on?'page':'false')});document.getElementById('phaseSignal').textContent=page.dataset.phase;document.getElementById('behaviourSignal').textContent=page.dataset.behaviour;const response=document.getElementById('responseSignal');response.hidden=!page.dataset.response;response.textContent=page.dataset.response;updateLabel();window.scrollTo({top:0,behavior:'smooth'})}
+function advance(){const page=active();if(!page||page.id==='exit-ticket')return;if(page.id==='i-do'){const next=steps.find(s=>!s.classList.contains('visible'));if(next){next.classList.add('visible');updateLabel();return}if(!iDo.classList.contains('thinking')){iDo.classList.add('thinking');updateLabel();return}}if(page.id==='vocabulary'){const next=vocab.find(c=>!c.classList.contains('revealed'));if(next){next.classList.add('revealed');updateLabel();return}}if(answerPages.has(page.id)&&!document.body.classList.contains('show-answers')){document.body.classList.add('show-answers');document.querySelectorAll('.swap-card').forEach(c=>c.classList.add('show-answer'));updateLabel();return}const index=order.indexOf(page.id);if(index<order.length-1)show(order[index+1])}
+tabs.forEach(tab=>tab.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();show(tab.dataset.page)}));
+document.addEventListener('click',event=>{if(event.target.closest('.nav button')||event.target.closest('.exit-choice'))return;event.preventDefault();event.stopPropagation();advance()},true);
+const choices=[...document.querySelectorAll('.exit-choice')],status=document.getElementById('exitStatus');choices.forEach(choice=>choice.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();choices.forEach(b=>b.setAttribute('aria-pressed',String(b===choice)));status.textContent='Selected: '+choice.dataset.choice}));
+document.addEventListener('keydown',event=>{if(event.key==='ArrowRight'||event.key===' '){event.preventDefault();advance()}if(event.key==='ArrowLeft'){const index=order.indexOf(active().id);if(index>0)show(order[index-1])}});
+show('do-now');
+</script>
+</body>
+</html>
