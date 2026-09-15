@@ -244,7 +244,7 @@
       5: { title: 'Linked Lists, Graphs, Trees and Hash Tables', spec: '1.4.2(b)' },
       6: { title: 'Data Structure Operations in C#', spec: '1.4.2(c)' },
       7: { title: 'Data Structures Exam Practice', spec: '1.4.2' },
-      8: { title: 'C# Number Conversions and Binary Arithmetic', spec: '1.4.1(e–f)' }
+      8: { title: 'C# Number-Conversion Algorithms', spec: '1.4.1(e–f)', version: '20260915-2' }
     };
 
     const programmes = {
@@ -326,7 +326,7 @@
           if (item) {
             card = document.createElement('a');
             card.className = 'lesson-card';
-            card.href = 'lessons/H446Lesson' + pad(n) + '.html';
+            card.href = 'lessons/H446Lesson' + pad(n) + '.html' + (item.version ? '?v=' + item.version : '');
             card.innerHTML = '<span class="lesson-number">Lesson ' + pad(n) + '</span><h3>' + item.title + '</h3><span class="lesson-meta">OCR H446 ' + item.spec + '</span><span class="open-label">Open lesson →</span>';
           } else {
             card = document.createElement('div');
